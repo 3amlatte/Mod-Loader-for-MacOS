@@ -42,7 +42,6 @@ implementation is new; it is not the original loader.
   settings, and logs stay in `~/Library/Application Support/MelvorModLoader`.
 - The macOS package includes **Mod Viewer 0.1.12**.
 - Installs with a readable `install.sh` script from Terminal; no unsigned installer `.app`.
-- No Merchant or Multitask code/files.
 
 ## Install (macOS)
 
