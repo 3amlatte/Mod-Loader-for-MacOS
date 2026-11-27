@@ -24,39 +24,13 @@ folder next to it, and the logger/mod folder move to
 Arch names come from the export features: `arm64` and `x86_64`. A universal export writes one
 data folder per architecture; the installer copies the matching loader for each one it finds.
 
-## Build
-
-```powershell
-pwsh ./macos/build-macos.ps1 `
-  -GameData "/path/to/data_GamesByMalcs.Melvor2_macos_arm64" `
-  -ModViewerZip "/path/to/melvor-idle-2-mods/dist/ModViewer-0.1.11.zip"
-```
-
-`-ModViewerZip` is optional: without it the script looks for the newest
+`-ModViewerZip` is optional: without it the build script looks for the newest
 `ModViewer-*.zip` in `../melvor-idle-2-mods/dist` and bundles that. Only one
-Mod Viewer is bundled. The installer installs it when no Mod Viewer is already
+Mod Viewer is bundled. The install script installs it when no Mod Viewer is already
 present, updates an earlier copy from this project (`3am.mod`), and leaves a
 third-party Mod Viewer untouched.
 
-The compile-time references are the managed game DLLs. They are the same assemblies on every
-platform; only the native engine differs, so the game's managed data folder is a valid reference even
-when publishing for macOS. Output: `dist-macos/MelvorModLoader-<version>-macos.zip`.
-
-Without PowerShell, publish the two runtimes by hand and copy the results into the package
-layout shown below:
-
-```bash
-dotnet publish Loader/MelvorModLoader.csproj -c Release -r osx-arm64 \
-  -p:GameData="/path/to/data_GamesByMalcs.Melvor2_macos_arm64" \\
-  -p:UseAppHost=false -o /tmp/mml-arm64
-dotnet publish Loader/MelvorModLoader.csproj -c Release -r osx-x64 \
-  -p:GameData="/path/to/data_GamesByMalcs.Melvor2_macos_arm64" \\
-  -p:UseAppHost=false -o /tmp/mml-x64
-# /tmp/mml-arm64 -> arm64/data_MelvorModLoader_macos_arm64/
-# /tmp/mml-x64   -> x64/data_MelvorModLoader_macos_x86_64/
-```
-
-Both runtime identifiers are published:
+Both runtime identifiers are packaged:
 
 | Folder | Runtime identifier | Godot folder suffix |
 | --- | --- | --- |
@@ -66,43 +40,30 @@ Both runtime identifiers are published:
 ## Package layout
 
 ```
-MelvorModLoader-<version>-macos/
-  Install Mod Loader for MacOS.app/
-    Contents/Info.plist
-    Contents/PkgInfo
-    Contents/MacOS/install-melvor-loader      shell script, Finder-facing UI
-    Contents/Resources/README.txt
-  Uninstall Mod Loader for MacOS.app/
-    Contents/Info.plist
-    Contents/PkgInfo
-    Contents/MacOS/uninstall-melvor-loader
+ModLoaderForMacOS-<version>-macos/
   arm64/data_MelvorModLoader_macos_arm64/     payload, copied into Contents/Resources
   x64/data_MelvorModLoader_macos_x86_64/
   mods/ModViewer/                             bundled Mod Viewer 0.1.11
-  install.sh                                  real work; app and Terminal both call it
-  uninstall.sh                                real work
+  install.sh                                  copies and re-signs; the default install
+  uninstall.sh                                removes the loader and re-signs
   README-MACOS.txt
   override.cfg
   LICENSE.txt
 ```
 
-Both `.app` bundles are thin shell-script apps (`CFBundleExecutable` is a bash
-script). `installer-app.sh` / `uninstaller-app.sh` only show `osascript` dialogs,
-find the game, and call the package-root `install.sh` / `uninstall.sh`. They are
-not signed by an Apple Developer certificate, so a downloaded copy needs
-right-click → Open once (or Open Anyway in System Settings).
-
-The root `arm64/`, `x64/`, `override.cfg` and `mods/ModViewer` items are the
-manual drag-and-drop install: copy the loader folders and `override.cfg` into
-the `.app`, and `ModViewer` into the mods folder under Application Support.
+There is no installer `.app`. Opening an unsigned app is the exact Gatekeeper
+prompt this package avoids. `install.sh` is readable text and is run explicitly
+from Terminal.
 
 ## Install
+
+This is the default and recommended install path:
 
 ```bash
 bash install.sh ["/path/to/Melvor Idle 2.app"]
 ```
 
-The installer:
+No `.app` is opened. The script:
 
 1. finds the `.app` (default Steam library, then `/Applications`);
 2. matches each `data_GamesByMalcs.Melvor2_macos_*` folder to a loader build;

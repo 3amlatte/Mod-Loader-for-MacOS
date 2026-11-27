@@ -59,7 +59,7 @@ if (-not $GameData -or -not (Test-Path -LiteralPath (Join-Path $GameData 'GamesB
 }
 $GameData = (Resolve-Path -LiteralPath $GameData).ProviderPath
 
-# Bundle the newest Mod Viewer build by default. The installer replaces any older
+# Bundle the newest Mod Viewer build by default. The install script replaces any older
 # Mod Viewer copy in the player's mods and mods-disabled folders.
 if (-not $ModViewerZip) {
     $siblingDist = Join-Path (Split-Path -Parent $root) 'melvor-idle-2-mods\dist'
@@ -91,17 +91,9 @@ Write-Host "  output:     $outDir"
 if (Test-Path -LiteralPath $stageRoot) { Remove-Item -LiteralPath $stageRoot -Recurse -Force }
 New-Item -ItemType Directory -Force -Path $packageRoot | Out-Null
 
-# The loader payload and the real scripts stay at the package root, so the
-# zip, so they can also be copied into the .app by hand. The .app bundles are thin
-# shell-script wrappers that show native dialogs and call install.sh / uninstall.sh.
-$installApp = Join-Path $packageRoot 'Install Mod Loader for MacOS.app'
-$installMacOS = Join-Path $installApp 'Contents\MacOS'
-$installRes = Join-Path $installApp 'Contents\Resources'
-$uninstallApp = Join-Path $packageRoot 'Uninstall Mod Loader for MacOS.app'
-$uninstallMacOS = Join-Path $uninstallApp 'Contents\MacOS'
-$uninstallRes = Join-Path $uninstallApp 'Contents\Resources'
-New-Item -ItemType Directory -Force -Path $installMacOS, $installRes, $uninstallMacOS, $uninstallRes | Out-Null
-
+# The loader payload and the install scripts live at the package root. There is no
+# installer .app: users run the readable install.sh from Terminal instead of opening
+# an unsigned application.
 $archMap = @{
     arm64 = @{ Rid = 'osx-arm64'; Suffix = 'macos_arm64';  Folder = 'data_MelvorModLoader_macos_arm64' }
     x64   = @{ Rid = 'osx-x64';   Suffix = 'macos_x86_64'; Folder = 'data_MelvorModLoader_macos_x86_64' }
@@ -138,22 +130,6 @@ foreach ($arch in $Architectures) {
         ((Get-ChildItem -LiteralPath $dest -File | Measure-Object Length -Sum).Sum / 1MB))
 }
 
-# The apps are thin wrappers. The payload and the real scripts stay at the package
-# package also supports a manual drag-and-drop install.
-Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'installer-app.sh') `
-    -Destination (Join-Path $installMacOS 'install-mod-loader-for-macos') -Force
-Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'uninstaller-app.sh') `
-    -Destination (Join-Path $uninstallMacOS 'uninstall-mod-loader-for-macos') -Force
-Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'README-MACOS.txt') `
-    -Destination (Join-Path $installRes 'README.txt') -Force
-
-# Branding assets, including the .icns used as the Finder icon.
-foreach ($res in @($installRes, $uninstallRes)) {
-    foreach ($asset in @('AppIcon.icns', 'logo.png', 'logo.svg', 'icon.png', 'icon.svg')) {
-        Copy-Item -LiteralPath (Join-Path $PSScriptRoot $asset) -Destination $res -Force
-    }
-}
-
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 
 function Write-LfFile {
@@ -161,45 +137,7 @@ function Write-LfFile {
     [IO.File]::WriteAllText($Path, ($Text -replace "`r`n", "`n"), $utf8NoBom)
 }
 
-function New-AppInfoPlist {
-    param([string] $Path, [string] $Executable, [string] $Identifier, [string] $Name, [string] $Version)
-    $plist = @"
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>CFBundleDevelopmentRegion</key><string>en</string>
-    <key>CFBundleExecutable</key><string>$Executable</string>
-    <key>CFBundleIdentifier</key><string>$Identifier</string>
-    <key>CFBundleIconFile</key><string>AppIcon</string>
-    <key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
-    <key>CFBundleName</key><string>$Name</string>
-    <key>CFBundleDisplayName</key><string>$Name</string>
-    <key>CFBundlePackageType</key><string>APPL</string>
-    <key>CFBundleShortVersionString</key><string>$Version</string>
-    <key>CFBundleVersion</key><string>$Version</string>
-    <key>LSMinimumSystemVersion</key><string>14.0</string>
-    <key>LSUIElement</key><true/>
-    <key>NSHighResolutionCapable</key><true/>
-</dict>
-</plist>
-"@
-    [IO.File]::WriteAllText($Path, $plist, $utf8NoBom)
-}
-
-New-AppInfoPlist -Path (Join-Path $installApp 'Contents\Info.plist') `
-    -Executable 'install-mod-loader-for-macos' -Identifier 'com.modloaderformacos.install' `
-    -Name 'Install Mod Loader for MacOS' -Version $Version
-New-AppInfoPlist -Path (Join-Path $uninstallApp 'Contents\Info.plist') `
-    -Executable 'uninstall-mod-loader-for-macos' -Identifier 'com.modloaderformacos.uninstall' `
-    -Name 'Uninstall Mod Loader for MacOS' -Version $Version
-foreach ($app in @($installApp, $uninstallApp)) {
-    [IO.File]::WriteAllText((Join-Path $app 'Contents\PkgInfo'), 'APPL????',
-        [Text.Encoding]::ASCII)
-}
-
-# Top-level files: the pieces that can be copied
-# into the .app by hand. The two .app bundles above are just optional UI wrappers.
+# Top-level files: readable scripts and the pieces needed for an advanced manual copy.
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'install.sh') -Destination $packageRoot -Force
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'uninstall.sh') -Destination $packageRoot -Force
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'README-MACOS.txt') -Destination $packageRoot -Force
@@ -211,8 +149,7 @@ Write-LfFile -Path (Join-Path $packageRoot 'override.cfg') `
     -Text "[dotnet]`n`nproject/assembly_name=`"MelvorModLoader`"`n"
 
 # Mod Viewer goes to the package root as mods/ModViewer. install.sh installs it when
-# no Mod Viewer is present, or updates this project's earlier copy; manual installers
-# can drag it.
+# no Mod Viewer is present, or updates this project's earlier copy.
 if ($ModViewerZip) {
     $viewerStage = Join-Path $outDir '_modviewer'
     if (Test-Path -LiteralPath $viewerStage) { Remove-Item -LiteralPath $viewerStage -Recurse -Force }
@@ -308,5 +245,4 @@ Write-Host ("Package: {0} ({1:N1} MB)" -f $zipPath, $sizeMb)
 Write-Host ("SHA256:  {0}" -f $hash)
 Write-Host ""
 Write-Host "This build is experimental and has not been tested on a Mac."
-Write-Host "On the Mac: unzip, then double-click 'Install Mod Loader for MacOS.app'."
-Write-Host "Terminal alternative: bash install.sh"
+Write-Host "On the Mac: unzip, open Terminal in the folder, then run: bash install.sh"

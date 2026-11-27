@@ -2,7 +2,7 @@ TITLE
 Mod Loader for MacOS
 
 SUMMARY
-An independent mod loader for Melvor Idle 2 on macOS: loads C# mods from a mods folder, keeps failures isolated, and includes a double-click installer for Apple Silicon and Intel.
+An independent mod loader for Melvor Idle 2 on macOS: loads C# mods from a mods folder, keeps failures isolated, and installs with a readable Terminal script for Apple Silicon and Intel.
 
 DESCRIPTION
 Mod Loader for MacOS is an independent loader for Melvor Idle 2. It loads existing C# mods and implements the same public mod API, so mods work without changes.
@@ -20,15 +20,20 @@ WHAT IT DOES
   to change it, or press Off to free it. Choices are stored in mods/hotkeys.json.
 
 INSTALL (macOS)
+There is no installer app. Install from Terminal with the readable install.sh script:
+
 1. Quit Melvor Idle 2.
 2. Unzip the package.
-3. Double-click Install Mod Loader for MacOS.app.
-4. If macOS cannot verify the app, right-click it -> Open -> Open, or use System Settings ->
-   Privacy & Security -> Open Anyway.
-5. Click Install, then Start Game.
+3. Open Terminal in the unzipped folder and run:
+   bash install.sh
+4. Start Melvor Idle 2 from Steam.
 
-The installer adds the loader inside Melvor Idle 2.app and re-signs the bundle ad-hoc. No game
-file is modified or replaced. Steam updates replace the app; run the installer again afterwards.
+The script finds the game, copies the loader inside Melvor Idle 2.app, installs Mod Viewer only
+if you do not already have one, and re-signs the bundle ad-hoc. No game file is modified or
+replaced. If the game is elsewhere:
+   bash install.sh "/path/to/Melvor Idle 2.app"
+
+Steam updates replace the app; run the script again afterwards.
 
 MODS FOLDER
 ~/Library/Application Support/MelvorModLoader/mods
@@ -44,7 +49,8 @@ This package is macOS-only. For Windows, use Melvor Mod Loader by falorfrozen:
 https://github.com/falorfrozen-cmd/MelvorModLoader
 
 UNINSTALL
-Double-click Uninstall Mod Loader for MacOS.app. Mods and settings stay in Application Support.
+In Terminal, run: bash uninstall.sh
+Mods and settings stay in Application Support.
 
 COMPATIBILITY
 The assembly name and public API names are kept for compatibility with existing mod DLLs. This

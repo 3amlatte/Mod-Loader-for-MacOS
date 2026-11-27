@@ -26,34 +26,25 @@ new; it is **not** the original Melvor Mod Loader.
 
 ## Install (macOS)
 
+No installer app is included, so there is no unsigned `.app` to open. Install from Terminal:
+
 1. Quit Melvor Idle 2.
 2. Unzip the package.
-3. Double-click **Install Mod Loader for MacOS.app** and click **Install**.
-4. If macOS cannot verify the app, right-click it -> Open -> Open (or System Settings ->
-   Privacy & Security -> Open Anyway).
+3. Open Terminal in the unzipped folder and run:
 
-The installer adds the loader inside `Melvor Idle 2.app` and re-signs the bundle ad-hoc. Manual
-and Terminal instructions are in `macos/README-MACOS.txt`.
+   ```bash
+   bash install.sh
+   ```
 
-## Build
+4. Start Melvor Idle 2 from Steam.
 
-Requires the .NET 10 SDK and the game's managed DLLs.
+The script finds the game, copies the loader into `Melvor Idle 2.app`, installs Mod Viewer if
+you do not already have one, and re-signs the bundle ad-hoc. You can read `install.sh` before
+running it. If the game is somewhere else:
 
-```powershell
-dotnet publish Loader/MelvorModLoader.csproj -c Release -r osx-arm64 `
-  -p:GameData=".../data_GamesByMalcs.Melvor2_macos_arm64" -p:UseAppHost=false
+```bash
+bash install.sh "/path/to/Melvor Idle 2.app"
 ```
-
-macOS package:
-
-```powershell
-pwsh ./macos/build-macos.ps1 `
-  -GameData ".../data_GamesByMalcs.Melvor2_macos_arm64" `
-  -ModViewerZip ".../ModViewer-0.1.11.zip"
-```
-
-The build script publishes `osx-arm64` and `osx-x64`, adds the app bundle, installer, Mod Viewer,
-and logo assets.
 
 ## Compatibility
 
