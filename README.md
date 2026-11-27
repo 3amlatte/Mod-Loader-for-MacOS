@@ -36,7 +36,8 @@ and Terminal instructions are in `macos/README-MACOS.txt`.
 Requires the .NET 10 SDK and the game's managed DLLs.
 
 ```powershell
-dotnet publish Loader/MelvorModLoader.csproj -c Release -r osx-arm64 `n  -p:GameData=".../data_GamesByMalcs.Melvor2_macos_arm64" -p:UseAppHost=false
+dotnet publish Loader/MelvorModLoader.csproj -c Release -r osx-arm64 `
+  -p:GameData=".../data_GamesByMalcs.Melvor2_macos_arm64" -p:UseAppHost=false
 ```
 
 macOS package:
