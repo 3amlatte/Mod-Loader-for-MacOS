@@ -14,31 +14,6 @@ implementation is new; it is not the original loader.
 - Added **Backup Saver** as a preinstalled mod. It copies saves after startup and each local
   save, and keeps the five newest dated backups.
 
-## Changes in 1.0.6
-
-- Added double-click **Install Mod Loader for MacOS.command**.
-- Added double-click **Uninstall Mod Loader for MacOS.command**.
-- `bash install.sh` stays as the Terminal fallback.
-
-## Changes in 1.0.5
-
-- **F1** and the top-bar **Mods** button both open Mod Viewer now.
-- Removed the separate Mod panels/hotkey menu.
-- Mod Viewer is required and its Enable checkbox is locked.
-- Updated the bundled Mod Viewer to 0.1.12.
-
-## Changes in 1.0.3
-
-- Removed the unsigned installer and uninstaller `.app` bundles.
-- The default install is now the readable Terminal script: `bash install.sh`.
-- Removed the public build instructions.
-
-## Changes in 1.0.2
-
-- Moved the startup status line from the top-left to the bottom-left.
-- Changed it from green to blue and gave it an outline so it stays readable over the game.
-- Added a short fade-out at the end of the 15 seconds.
-
 ## Features
 
 - Loads every DLL under `mods` (flat or one folder deep).
