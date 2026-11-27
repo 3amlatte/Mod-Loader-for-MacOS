@@ -123,6 +123,19 @@ else
     die "The bundled Mod Viewer was not found. This package is incomplete; reinstall it."
 fi
 
+# Backup Saver is preinstalled. Respect an explicit disable, otherwise install/update it.
+BACKUP_SRC="$HERE/mods/BackupSaver"
+if [ -d "$SUPPORT/mods-disabled/BackupSaver" ]; then
+    say "  Backup Saver: disabled by user; left alone"
+elif [ -d "$BACKUP_SRC" ]; then
+    rm -rf "$MODS/BackupSaver" 2>/dev/null || true
+    mkdir -p "$MODS/BackupSaver"
+    cp -R "$BACKUP_SRC/." "$MODS/BackupSaver/"
+    say "  Backup Saver -> $MODS/BackupSaver"
+else
+    warn "The bundled Backup Saver was not found; installing the loader without it."
+fi
+
 # Any change inside a signed .app invalidates Apple's signature. Re-signing the bundle
 # ad-hoc recomputes it and drops the hardened runtime, which also lets the bundled
 # Microsoft .NET runtime load. The game's own binary and data are not changed.

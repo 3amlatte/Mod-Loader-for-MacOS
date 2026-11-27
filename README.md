@@ -20,6 +20,9 @@ new; it is **not** the original Melvor Mod Loader.
 - The top-bar **Mods** button or **F1** opens **Mod Viewer** (F2 also works). Mod Viewer is part
   of the loader, so it cannot be disabled. If it is missing, the loader reports an error and
   needs to be reinstalled.
+- Includes **Backup Saver**, which copies the save files to
+  `~/Library/Application Support/MelvorModLoader/backups` after startup and each save, keeping
+  the five newest copies.
 - Uses Godot's own `override.cfg` mechanism: the loader starts first, then starts the game's
   untouched managed code. No game file is modified or replaced.
 - On macOS, mods, settings, and logs live in `~/Library/Application Support/MelvorModLoader`,

@@ -43,6 +43,7 @@ ModLoaderForMacOS-<version>-macos/
   arm64/data_MelvorModLoader_macos_arm64/     payload, copied into Contents/Resources
   x64/data_MelvorModLoader_macos_x86_64/
   mods/ModViewer/                             bundled Mod Viewer 0.1.12
+  mods/BackupSaver/                           preinstalled save backup mod 0.1.0
   Install Mod Loader for MacOS.command        double-click wrapper for install.sh
   Uninstall Mod Loader for MacOS.command      double-click wrapper for uninstall.sh
   install.sh                                  copies and re-signs
@@ -75,7 +76,9 @@ No `.app` is opened. The script:
 5. creates `~/Library/Application Support/MelvorModLoader/mods`;
 6. always installs the required bundled `mods/ModViewer` and warns if another
    ModViewer exists under a different folder;
-7. re-signs the bundle ad-hoc (`codesign --force --deep --sign -`), which is required after
+7. installs the preinstalled `mods/BackupSaver` unless the user has explicitly
+   disabled it in `mods-disabled`;
+8. re-signs the bundle ad-hoc (`codesign --force --deep --sign -`), which is required after
    changing a signed `.app` and also removes the hardened runtime so the bundled Microsoft
    .NET runtime can load. If `--deep` fails on the bundle, it signs the main executable with
    the existing entitlements plus `com.apple.security.cs.disable-library-validation` instead.

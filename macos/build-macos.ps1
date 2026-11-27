@@ -25,6 +25,10 @@ param(
     # ModViewer-*.zip in ../melvor-idle-2-mods/dist when that folder exists.
     [string] $ModViewerZip,
 
+    # Built Backup Saver zip (contains mods/BackupSaver/...). Defaults to the newest
+    # BackupSaver-*.zip in ../melvor-idle-2-mods/dist when that folder exists.
+    [string] $BackupSaverZip,
+
     [string] $OutputDir
 )
 
@@ -77,6 +81,23 @@ if ($ModViewerZip -and -not (Test-Path -LiteralPath $ModViewerZip)) {
     throw "Mod Viewer zip not found: $ModViewerZip"
 }
 
+# Bundle the newest Backup Saver build by default.
+if (-not $BackupSaverZip) {
+    $siblingDist = Join-Path (Split-Path -Parent $root) 'melvor-idle-2-mods\dist'
+    $candidates = @(Get-ChildItem -LiteralPath $siblingDist -Filter 'BackupSaver-*.zip' -File -ErrorAction SilentlyContinue |
+        ForEach-Object {
+            $match = [regex]::Match($_.Name, 'BackupSaver-([0-9]+(?:\.[0-9]+)*)\.zip$')
+            $version = if ($match.Success) { [version] $match.Groups[1].Value } else { [version] '0.0.0' }
+            [pscustomobject]@{ File = $_.FullName; Version = $version }
+        } |
+        Sort-Object Version -Descending)
+    if ($candidates.Count -gt 0) { $BackupSaverZip = $candidates[0].File }
+}
+
+if ($BackupSaverZip -and -not (Test-Path -LiteralPath $BackupSaverZip)) {
+    throw "Backup Saver zip not found: $BackupSaverZip"
+}
+
 $stageRoot = Join-Path $outDir 'stage'
 $publishRoot = Join-Path $outDir '_publish'
 $packageName = "ModLoaderForMacOS-$Version-macos"
@@ -85,7 +106,8 @@ $zipPath = Join-Path $outDir "$packageName.zip"
 
 Write-Host "Mod Loader for MacOS $Version for macOS"
 Write-Host "  game data:  $GameData"
-Write-Host "  Mod Viewer: $(if ($ModViewerZip) { $ModViewerZip } else { '(not found; package will not include it)' })"
+Write-Host "  Mod Viewer: $(if ($ModViewerZip) { $ModViewerZip } else { '(not found)' })"
+Write-Host "  Backup Saver: $(if ($BackupSaverZip) { $BackupSaverZip } else { '(not found)' })"
 Write-Host "  output:     $outDir"
 
 if (Test-Path -LiteralPath $stageRoot) { Remove-Item -LiteralPath $stageRoot -Recurse -Force }
@@ -179,6 +201,33 @@ if ($ModViewerZip) {
 }
 else {
     throw "No Mod Viewer zip found. Mod Viewer is required, so the package cannot be built without it. Pass -ModViewerZip '<path>'."
+}
+
+# Backup Saver is preinstalled. It backs up saves automatically and keeps the five newest.
+if ($BackupSaverZip) {
+    $backupStage = Join-Path $outDir '_backupsaver'
+    if (Test-Path -LiteralPath $backupStage) { Remove-Item -LiteralPath $backupStage -Recurse -Force }
+    Expand-Archive -LiteralPath $BackupSaverZip -DestinationPath $backupStage
+
+    $backupSrc = Join-Path $backupStage 'mods\BackupSaver'
+    if (-not (Test-Path -LiteralPath (Join-Path $backupSrc 'BackupSaver.dll'))) {
+        throw "The Backup Saver zip does not contain mods\BackupSaver\BackupSaver.dll: $BackupSaverZip"
+    }
+
+    $backupDest = Join-Path $packageRoot 'mods\BackupSaver'
+    New-Item -ItemType Directory -Force -Path $backupDest | Out-Null
+    Copy-Item -Path (Join-Path $backupSrc '*') -Destination $backupDest -Recurse -Force
+    Remove-Item -LiteralPath $backupStage -Recurse -Force
+
+    $backupDlls = @(Get-ChildItem -LiteralPath (Join-Path $packageRoot 'mods') -Recurse -Filter 'BackupSaver.dll' -File)
+    if ($backupDlls.Count -ne 1) {
+        throw "Expected exactly one BackupSaver.dll in the package, found $($backupDlls.Count)."
+    }
+
+    Write-Host "  bundled Backup Saver: $([IO.Path]::GetFileName($BackupSaverZip))"
+}
+else {
+    throw "No Backup Saver zip found. Backup Saver is preinstalled, so the package cannot be built without it. Pass -BackupSaverZip '<path>'."
 }
 
 function ConvertTo-ZipExternalAttributes {

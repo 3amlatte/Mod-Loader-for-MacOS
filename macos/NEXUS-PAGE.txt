@@ -18,6 +18,8 @@ WHAT IT DOES
 - Protects offline progress. Mods receive no frames while the game computes offline progress.
 - One Mods button. The top-bar Mods button or F1 opens Mod Viewer (F2 also works). Mod Viewer is
   part of the loader, cannot be disabled, and is reported as a loader error if it is missing.
+- Backup Saver is preinstalled. It copies saves after startup and each save, keeping the five
+  newest dated backups in ~/Library/Application Support/MelvorModLoader/backups.
 
 INSTALL (macOS)
 There is no installer app. The package uses a readable .command script instead:

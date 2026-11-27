@@ -1,4 +1,4 @@
-# Mod Loader for MacOS 1.0.6
+# Mod Loader for MacOS 1.0.7
 
 An independent mod loader for **Melvor Idle 2**, packaged for macOS on Apple Silicon and Intel.
 
@@ -8,6 +8,11 @@ An independent mod loader for **Melvor Idle 2**, packaged for macOS on Apple Sil
 It implements the same public mod API as Melvor Mod Loader (`IMod`, `ModContext`,
 `GameAccess`, `ModWindow`, `Hotkeys`) so existing mod DLLs load unchanged. The
 implementation is new; it is not the original loader.
+
+## Changes in 1.0.7
+
+- Added **Backup Saver** as a preinstalled mod. It copies saves after startup and each local
+  save, and keeps the five newest dated backups.
 
 ## Changes in 1.0.6
 
@@ -46,7 +51,9 @@ implementation is new; it is not the original loader.
 - Uses Godot's standard `override.cfg` mechanism. No game file is modified or replaced.
 - The macOS package installs inside `Melvor Idle 2.app` and re-signs it ad-hoc; mods,
   settings, and logs stay in `~/Library/Application Support/MelvorModLoader`.
-- The macOS package includes **Mod Viewer 0.1.12**.
+- The macOS package includes **Mod Viewer 0.1.12** and **Backup Saver 0.1.0**.
+- Backup Saver keeps the five newest save backups in
+  `~/Library/Application Support/MelvorModLoader/backups`.
 - Installs with a readable `install.sh` script from Terminal; no unsigned installer `.app`.
 
 ## Install (macOS)
@@ -69,8 +76,8 @@ contract existing mods reference. The product and implementation are Mod Loader 
 
 ## Package
 
-- `ModLoaderForMacOS-1.0.6-macos.zip` - SHA256
-  `4B5ADB3DE594CF9D8E705BF783B0E753A9B514D0EA36C128232AC72D02F9456D`
+- `ModLoaderForMacOS-1.0.7-macos.zip` - SHA256
+  `218544D34444DB8C5D701CE3723873DB8186E83E0E20D3A888B5A98E0178E661`
 
 The macOS package is experimental and has not been run on a physical Mac. The loader and
 all 14 3am mods compile against this API.

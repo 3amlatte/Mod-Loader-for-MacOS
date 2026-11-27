@@ -1,4 +1,4 @@
-Mod Loader for MacOS 1.0.6 for macOS (experimental)
+Mod Loader for MacOS 1.0.7 for macOS (experimental)
 =================================================
 
 This is Mod Loader for MacOS, an independent loader for Melvor Idle 2. It keeps the public
@@ -38,7 +38,7 @@ instead; open it in a text editor first if you want to see what it runs.
 If macOS says it cannot open the .command, right-click it and choose Open.
 If that still fails, run the same install from Terminal:
 
-       cd ~/Downloads/ModLoaderForMacOS-1.0.6-macos
+       cd ~/Downloads/ModLoaderForMacOS-1.0.7-macos
        bash install.sh
 
 The script finds the game in the usual Steam folder; if it cannot, it stops and
@@ -121,14 +121,25 @@ Mod Viewer 0.1.12 is included in this package. The loader's top-bar Mods button
 or F1 opens it (F2 also works). Mod Viewer is part of the loader, so its Enable
 box is locked and it cannot be disabled. If it is missing, the loader shows an
 error and the loader should be reinstalled. install.sh always installs its own
-Mod Viewer copy. An earlier copy from this project
-(its folder has a 3am.mod marker) is updated in place. A Mod Viewer from someone
-else is left untouched, and nothing in mods-disabled is deleted. Your Mod Viewer
-settings and groups are kept. To switch from another Mod Viewer to the bundled
-one, delete the other folder yourself first.
+Mod Viewer copy. If another ModViewer exists under a different folder, the
+installer warns so you can remove the duplicate.
 
 Mod Viewer 0.1.12 opens the mods folder with the macOS "open" command and
 restarts Steam with /bin/sh instead of PowerShell.
+
+Backup Saver 0.1.0 is also preinstalled. It copies your save files after startup
+and after each local save, and keeps the five newest dated backups here:
+
+    ~/Library/Application Support/MelvorModLoader/backups/
+
+Each backup keeps the game's folder layout, for example:
+
+    <date_time>/steam/<steam-id>/saves/save_<save-id>.sav
+
+To restore, quit the game and copy a backup's `saves` folder over the game's
+`saves` folder, keeping the same paths. Backups are outside the game .app, so
+Steam updates do not remove them. If you disable Backup Saver in Mod Viewer,
+the installer leaves it disabled.
 
 Most other mods are net10.0 class libraries and are platform-neutral. F1-F9 may
 require holding Fn on Apple keyboards; the Mods button in the game's top bar
