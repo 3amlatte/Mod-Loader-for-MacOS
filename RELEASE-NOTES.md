@@ -2,6 +2,9 @@
 
 An independent mod loader for **Melvor Idle 2**, packaged for macOS on Apple Silicon and Intel.
 
+> **macOS only.** This loader does not support Windows. For Windows, use
+> [Melvor Mod Loader by falorfrozen](https://github.com/falorfrozen-cmd/MelvorModLoader).
+
 It implements the same public mod API as Melvor Mod Loader (`IMod`, `ModContext`,
 `GameAccess`, `ModWindow`, `Hotkeys`) so existing mod DLLs load unchanged. The
 implementation is new; it is not the original loader.
@@ -28,11 +31,6 @@ implementation is new; it is not the original loader.
 4. If macOS cannot verify the app, right-click it -> Open -> Open, or use System Settings ->
    Privacy & Security -> Open Anyway.
 5. Click Install, then Start Game.
-
-## Windows
-
-This project is macOS-only. For Windows, use Melvor Mod Loader by falorfrozen:
-https://github.com/falorfrozen-cmd/MelvorModLoader
 
 ## Compatibility
 
