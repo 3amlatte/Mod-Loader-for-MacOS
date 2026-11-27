@@ -1,4 +1,4 @@
-# Mod Loader for MacOS 1.0.3
+# Mod Loader for MacOS 1.0.4
 
 An independent mod loader for **Melvor Idle 2**, packaged for macOS on Apple Silicon and Intel.
 
@@ -8,6 +8,12 @@ An independent mod loader for **Melvor Idle 2**, packaged for macOS on Apple Sil
 It implements the same public mod API as Melvor Mod Loader (`IMod`, `ModContext`,
 `GameAccess`, `ModWindow`, `Hotkeys`) so existing mod DLLs load unchanged. The
 implementation is new; it is not the original loader.
+
+## Changes in 1.0.4
+
+- The top-bar **Mods** button now opens Mod Viewer directly. F1 opens the loader's Mod panels
+  menu for key changes.
+- If Mod Viewer is missing, the button falls back to the Mod panels menu.
 
 ## Changes in 1.0.3
 
@@ -28,10 +34,9 @@ implementation is new; it is not the original loader.
 - Raises `ModContext.Frame` once per rendered frame, paused during offline progress.
 - Blue status line at the bottom-left for 15 seconds with the version and mod count,
   fading out at the end.
-- **Mods** button in the game's top bar (or F1): lists every mod panel, lets players
-  change or switch off its key, and stores choices in `hotkeys.json`. This is the loader's
-  panel/hotkey menu, not Mod Viewer. Mod Viewer is a separate mod included in the package;
-  it lists installed mods and opens with F2.
+- **Mods** button in the game's top bar opens **Mod Viewer** (also F2); if Mod Viewer is
+  missing, it falls back to the loader's panel list. Press **F1** for **Mod panels** to change
+  or switch off any panel's key; choices are stored in `hotkeys.json`.
 - Uses Godot's standard `override.cfg` mechanism. No game file is modified or replaced.
 - The macOS package installs inside `Melvor Idle 2.app` and re-signs it ad-hoc; mods,
   settings, and logs stay in `~/Library/Application Support/MelvorModLoader`.
@@ -59,8 +64,8 @@ contract existing mods reference. The product and implementation are Mod Loader 
 
 ## Package
 
-- `ModLoaderForMacOS-1.0.3-macos.zip` - SHA256
-  `EBFA15A5104649F449E9FC1477A2FD93D723E9AAFFD83B1F15AC4B6367E07A89`
+- `ModLoaderForMacOS-1.0.4-macos.zip` - SHA256
+  `1D34A7E868CF2994C4BC61C934B1B0CEDD336CF45389D80DC9DF6A8463E0D5E2`
 
 The macOS package is experimental and has not been run on a physical Mac. The loader and
 all 14 3am mods compile against this API.

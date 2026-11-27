@@ -188,6 +188,17 @@ public static class Hotkeys
         }
     }
 
+    static ModWindow? ViewerWindow() => s_windows.FirstOrDefault(window =>
+        window.Title.Equals("Mod Viewer", StringComparison.OrdinalIgnoreCase) &&
+        window.Mod.Equals("ModViewer", StringComparison.OrdinalIgnoreCase));
+
+    static void OpenModsButton()
+    {
+        ModWindow? viewer = ViewerWindow();
+        if (viewer != null) viewer.Press();
+        else ToggleMenu();
+    }
+
     public static void ToggleMenu()
     {
         if (s_menu is { Visible: true })
@@ -372,7 +383,7 @@ public static class Hotkeys
         button.AddThemeStyleboxOverride("focus", new StyleBoxEmpty());
         button.AddThemeStyleboxOverride("hover", hover);
         button.AddThemeStyleboxOverride("pressed", hover);
-        button.Pressed += ToggleMenu;
+        button.Pressed += OpenModsButton;
         return button;
     }
 
@@ -386,11 +397,15 @@ public static class Hotkeys
     static void UpdateButton()
     {
         if (s_button == null) return;
-        string key = Menu.KeyLabel;
+        ModWindow? viewer = ViewerWindow();
+        string label = viewer == null ? "Mod panels" : "Mod Viewer";
+        string key = viewer == null ? Menu.KeyLabel : viewer.KeyLabel;
         bool clash = s_windows.Any(window => SharingKey(window).Any());
-        s_button.TooltipText = "Mods" + (key.Length == 0 ? "" : $"  ({key})")
-                               + "\nOpen any mod window, or change or switch off its key."
-                               + (clash ? "\nTwo mods share a key: open this to fix it." : "");
+        s_button.TooltipText = label + (key.Length == 0 ? "" : $"  ({key})")
+                               + (viewer == null
+                                   ? "\nOpen the loader's panel and key menu."
+                                   : "\nOpen Mod Viewer.")
+                               + (clash ? "\nTwo mods share a key: press F1 to fix it." : "");
         s_button.Modulate = clash ? new Color(1f, 0.8f, 0.5f) : Colors.White;
     }
 
@@ -453,7 +468,7 @@ public static class Hotkeys
             var header = new HBoxContainer();
             var heading = new VBoxContainer();
             heading.AddThemeConstantOverride("separation", 0);
-            var title = new Label { Text = "Mods" };
+            var title = new Label { Text = "Mod panels" };
             title.AddThemeFontSizeOverride("font_size", 22);
             title.AddThemeColorOverride("font_color", Accent);
             heading.AddChild(title);
@@ -470,8 +485,9 @@ public static class Hotkeys
 
             var hint = new Label
             {
-                Text = "Click a window's name to open it. Click its key to change it, or press Off to free it. "
-                     + "Choices are kept in hotkeys.json.",
+                Text = "Click a panel's name to open it. Click its key to change it, or press Off to free it. "
+                     + "Choices are kept in hotkeys.json. Press F1 to reopen this menu; the top-bar Mods "
+                     + "button opens Mod Viewer.",
                 AutowrapMode = TextServer.AutowrapMode.WordSmart
             };
             hint.AddThemeFontSizeOverride("font_size", 11);
