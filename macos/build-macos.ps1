@@ -140,6 +140,11 @@ function Write-LfFile {
 # Top-level files: readable scripts and the pieces needed for an advanced manual copy.
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'install.sh') -Destination $packageRoot -Force
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'uninstall.sh') -Destination $packageRoot -Force
+foreach ($command in @('Install Mod Loader for MacOS.command', 'Uninstall Mod Loader for MacOS.command')) {
+    $source = Join-Path $PSScriptRoot $command
+    $text = [IO.File]::ReadAllText($source)
+    Write-LfFile -Path (Join-Path $packageRoot $command) -Text $text
+}
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'README-MACOS.txt') -Destination $packageRoot -Force
 Copy-Item -LiteralPath (Join-Path $root 'LICENSE') -Destination (Join-Path $packageRoot 'LICENSE.txt') -Force
 foreach ($asset in @('AppIcon.icns', 'logo.png', 'logo.svg', 'logo@2x.png', 'icon.png', 'icon.svg', 'icon@2x.png')) {
@@ -245,4 +250,4 @@ Write-Host ("Package: {0} ({1:N1} MB)" -f $zipPath, $sizeMb)
 Write-Host ("SHA256:  {0}" -f $hash)
 Write-Host ""
 Write-Host "This build is experimental and has not been tested on a Mac."
-Write-Host "On the Mac: unzip, open Terminal in the folder, then run: bash install.sh"
+Write-Host "On the Mac: unzip, then double-click 'Install Mod Loader for MacOS.command'."

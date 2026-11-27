@@ -20,16 +20,16 @@ WHAT IT DOES
   part of the loader, cannot be disabled, and is reported as a loader error if it is missing.
 
 INSTALL (macOS)
-There is no installer app. Install from Terminal with the readable install.sh script:
+There is no installer app. The package uses a readable .command script instead:
 
 1. Quit Melvor Idle 2.
 2. Unzip the package.
-3. Open Terminal in the unzipped folder and run:
-   bash install.sh
+3. Double-click Install Mod Loader for MacOS.command.
+   If macOS blocks it, right-click it -> Open, or run: bash install.sh
 4. Start Melvor Idle 2 from Steam.
 
-The script finds the game, copies the loader inside Melvor Idle 2.app, installs Mod Viewer only
-if you do not already have one, and re-signs the bundle ad-hoc. No game file is modified or
+The script finds the game, copies the loader inside Melvor Idle 2.app, always installs the
+required Mod Viewer 0.1.12, and re-signs the bundle ad-hoc. No game file is modified or
 replaced. If the game is elsewhere:
    bash install.sh "/path/to/Melvor Idle 2.app"
 

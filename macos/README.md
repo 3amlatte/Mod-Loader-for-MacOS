@@ -43,7 +43,9 @@ ModLoaderForMacOS-<version>-macos/
   arm64/data_MelvorModLoader_macos_arm64/     payload, copied into Contents/Resources
   x64/data_MelvorModLoader_macos_x86_64/
   mods/ModViewer/                             bundled Mod Viewer 0.1.12
-  install.sh                                  copies and re-signs; the default install
+  Install Mod Loader for MacOS.command        double-click wrapper for install.sh
+  Uninstall Mod Loader for MacOS.command      double-click wrapper for uninstall.sh
+  install.sh                                  copies and re-signs
   uninstall.sh                                removes the loader and re-signs
   README-MACOS.txt
   override.cfg
@@ -51,12 +53,14 @@ ModLoaderForMacOS-<version>-macos/
 ```
 
 There is no installer `.app`. Opening an unsigned app is the exact Gatekeeper
-prompt this package avoids. `install.sh` is readable text and is run explicitly
-from Terminal.
+prompt this package avoids. The `.command` files and `install.sh` are readable
+text scripts.
 
 ## Install
 
-This is the default and recommended install path:
+Default install: double-click `Install Mod Loader for MacOS.command`.
+
+Terminal fallback:
 
 ```bash
 bash install.sh ["/path/to/Melvor Idle 2.app"]

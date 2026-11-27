@@ -1,4 +1,4 @@
-Mod Loader for MacOS 1.0.5 for macOS (experimental)
+Mod Loader for MacOS 1.0.6 for macOS (experimental)
 =================================================
 
 This is Mod Loader for MacOS, an independent loader for Melvor Idle 2. It keeps the public
@@ -22,21 +22,24 @@ This package is macOS-only. For Windows, use Melvor Mod Loader by falorfrozen:
 https://github.com/falorfrozen-cmd/MelvorModLoader
 
 
-Install (Terminal, recommended)
--------------------------------
+Install (double-click, recommended)
+-----------------------------------
 There is no installer .app in this package. Opening an unsigned app is exactly
-the Gatekeeper prompt this avoids. install.sh is readable text; open it first if
-you want to see every change it makes.
+the Gatekeeper prompt this avoids. The package uses a readable .command script
+instead; open it in a text editor first if you want to see what it runs.
 
 1. Quit Melvor Idle 2.
 2. Unzip this package (double-click the zip).
-3. Open Terminal.
-4. Change to the unzipped folder, for example:
-       cd ~/Downloads/ModLoaderForMacOS-1.0.3-macos
-5. Run:
-       bash install.sh
-6. Start Melvor Idle 2 from Steam. The blue loader status line shows at the
+3. Double-click:
+       Install Mod Loader for MacOS.command
+4. Start Melvor Idle 2 from Steam. The blue loader status line shows at the
    bottom-left for 15 seconds.
+
+If macOS says it cannot open the .command, right-click it and choose Open.
+If that still fails, run the same install from Terminal:
+
+       cd ~/Downloads/ModLoaderForMacOS-1.0.6-macos
+       bash install.sh
 
 The script finds the game in the usual Steam folder; if it cannot, it stops and
 tells you to pass the path:
@@ -44,9 +47,9 @@ tells you to pass the path:
        bash install.sh "/path/to/Melvor Idle 2.app"
 
 It copies the loader into Contents/Resources, writes Contents/MacOS/override.cfg,
-creates the mods folder, installs Mod Viewer only when no Mod Viewer is present,
-and re-signs the bundle ad-hoc. An earlier Mod Viewer from this project is
-updated; a third-party Mod Viewer is left alone.
+creates the mods folder, always installs the required Mod Viewer 0.1.12, and
+re-signs the bundle ad-hoc. The double-click script keeps the Terminal window
+open so you can read any error.
 
 The script's log is:
     ~/Library/Application Support/MelvorModLoader/install.log
@@ -66,8 +69,7 @@ you must re-sign the bundle yourself or macOS may refuse to start it.
 4. Copy override.cfg from this package into Contents/MacOS.
 5. Copy this package's ModViewer folder (inside mods/) into:
        ~/Library/Application Support/MelvorModLoader/mods/
-   Do this only if you do not already have a Mod Viewer. If you have an older
-   copy from this project, replace that folder; leave a third-party one alone.
+   Replace any existing ModViewer folder. Mod Viewer is required.
 6. Re-sign the bundle:
        codesign --force --deep --sign - "/path/to/Melvor Idle 2.app"
 7. Start the game from Steam.
@@ -89,9 +91,7 @@ Inside Melvor Idle 2.app:
 And in the mods folder:
 
     ~/Library/Application Support/MelvorModLoader/mods/ModViewer    new (0.1.12,
-                                                                    unless you
-                                                                    already have
-                                                                    a Mod Viewer)
+                                                                    required)
 
 No game file is modified or replaced. A copy of the .NET 10 runtime goes into
 each loader folder. The game's own binary and data are untouched.
@@ -146,7 +146,11 @@ to the game folder and then /tmp.
 
 Uninstall
 ---------
-In Terminal, from the unzipped package:
+Double-click:
+    Uninstall Mod Loader for MacOS.command
+
+If macOS blocks it, right-click -> Open. Or in Terminal, from the unzipped
+package:
 
     bash uninstall.sh
 

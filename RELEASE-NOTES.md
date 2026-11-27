@@ -1,4 +1,4 @@
-# Mod Loader for MacOS 1.0.5
+# Mod Loader for MacOS 1.0.6
 
 An independent mod loader for **Melvor Idle 2**, packaged for macOS on Apple Silicon and Intel.
 
@@ -8,6 +8,12 @@ An independent mod loader for **Melvor Idle 2**, packaged for macOS on Apple Sil
 It implements the same public mod API as Melvor Mod Loader (`IMod`, `ModContext`,
 `GameAccess`, `ModWindow`, `Hotkeys`) so existing mod DLLs load unchanged. The
 implementation is new; it is not the original loader.
+
+## Changes in 1.0.6
+
+- Added double-click **Install Mod Loader for MacOS.command**.
+- Added double-click **Uninstall Mod Loader for MacOS.command**.
+- `bash install.sh` stays as the Terminal fallback.
 
 ## Changes in 1.0.5
 
@@ -45,16 +51,16 @@ implementation is new; it is not the original loader.
 
 ## Install (macOS)
 
-There is no installer app, so there is no unsigned `.app` to open. Install from Terminal:
+There is no installer `.app`. The package uses readable `.command` scripts instead:
 
 1. Quit Melvor Idle 2.
 2. Unzip the package.
-3. Open Terminal in the unzipped folder and run `bash install.sh`.
+3. Double-click **Install Mod Loader for MacOS.command**.
 4. Start Melvor Idle 2 from Steam.
 
-The script finds the game, installs the loader and Mod Viewer when needed, and re-signs the
-bundle ad-hoc. If the game is somewhere else:
-`bash install.sh "/path/to/Melvor Idle 2.app"`.
+If macOS blocks the `.command`, right-click it -> **Open**, or run `bash install.sh` in Terminal.
+The script finds the game, installs the required Mod Viewer 0.1.12, and re-signs the bundle
+ad-hoc. If the game is somewhere else: `bash install.sh "/path/to/Melvor Idle 2.app"`.
 
 ## Compatibility
 
@@ -63,8 +69,8 @@ contract existing mods reference. The product and implementation are Mod Loader 
 
 ## Package
 
-- `ModLoaderForMacOS-1.0.5-macos.zip` - SHA256
-  `DDFE24A699D10436952ADCDD0E8A68D97D92F36B756A6EE66F6FCF2F738C610B`
+- `ModLoaderForMacOS-1.0.6-macos.zip` - SHA256
+  `4B5ADB3DE594CF9D8E705BF783B0E753A9B514D0EA36C128232AC72D02F9456D`
 
 The macOS package is experimental and has not been run on a physical Mac. The loader and
 all 14 3am mods compile against this API.

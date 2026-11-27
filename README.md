@@ -27,21 +27,19 @@ new; it is **not** the original Melvor Mod Loader.
 
 ## Install (macOS)
 
-No installer app is included, so there is no unsigned `.app` to open. Install from Terminal:
+No installer `.app` is included. The package uses a readable `.command` script instead:
 
 1. Quit Melvor Idle 2.
 2. Unzip the package.
-3. Open Terminal in the unzipped folder and run:
-
-   ```bash
-   bash install.sh
-   ```
-
+3. Double-click **Install Mod Loader for MacOS.command**.
 4. Start Melvor Idle 2 from Steam.
 
-The script finds the game, copies the loader into `Melvor Idle 2.app`, installs Mod Viewer if
-you do not already have one, and re-signs the bundle ad-hoc. You can read `install.sh` before
-running it. If the game is somewhere else:
+If macOS blocks the `.command`, right-click it -> **Open**, or run `bash install.sh` from
+Terminal in the unzipped folder.
+
+The script finds the game, copies the loader into `Melvor Idle 2.app`, installs the required
+Mod Viewer, and re-signs the bundle ad-hoc. You can read the `.command` and `install.sh` before
+running them. If the game is somewhere else:
 
 ```bash
 bash install.sh "/path/to/Melvor Idle 2.app"
