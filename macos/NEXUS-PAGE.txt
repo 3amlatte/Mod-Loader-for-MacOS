@@ -31,7 +31,7 @@ There is no installer app. The package uses a readable .command script instead:
 4. Start Melvor Idle 2 from Steam.
 
 The script finds the game, copies the loader inside Melvor Idle 2.app, always installs the
-required Mod Viewer 0.1.12, and re-signs the bundle ad-hoc. No game file is modified or
+required Mod Viewer 0.1.13, and re-signs the bundle ad-hoc. No game file is modified or
 replaced. If the game is elsewhere:
    bash install.sh "/path/to/Melvor Idle 2.app"
 

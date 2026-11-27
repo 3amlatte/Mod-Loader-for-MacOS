@@ -42,7 +42,7 @@ Both runtime identifiers are packaged:
 ModLoaderForMacOS-<version>-macos/
   arm64/data_MelvorModLoader_macos_arm64/     payload, copied into Contents/Resources
   x64/data_MelvorModLoader_macos_x86_64/
-  mods/ModViewer/                             bundled Mod Viewer 0.1.12
+  mods/ModViewer/                             bundled Mod Viewer 0.1.13
   mods/BackupSaver/                           preinstalled save backup mod 0.1.0
   Install Mod Loader for MacOS.command        double-click wrapper for install.sh
   Uninstall Mod Loader for MacOS.command      double-click wrapper for uninstall.sh

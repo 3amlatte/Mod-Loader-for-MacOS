@@ -1,4 +1,4 @@
-Mod Loader for MacOS 1.0.7 for macOS (experimental)
+Mod Loader for MacOS 1.0.8 for macOS (experimental)
 =================================================
 
 This is Mod Loader for MacOS, an independent loader for Melvor Idle 2. It keeps the public
@@ -47,7 +47,7 @@ tells you to pass the path:
        bash install.sh "/path/to/Melvor Idle 2.app"
 
 It copies the loader into Contents/Resources, writes Contents/MacOS/override.cfg,
-creates the mods folder, always installs the required Mod Viewer 0.1.12, and
+creates the mods folder, always installs the required Mod Viewer 0.1.13, and
 re-signs the bundle ad-hoc. The double-click script keeps the Terminal window
 open so you can read any error.
 
@@ -90,7 +90,7 @@ Inside Melvor Idle 2.app:
 
 And in the mods folder:
 
-    ~/Library/Application Support/MelvorModLoader/mods/ModViewer    new (0.1.12,
+    ~/Library/Application Support/MelvorModLoader/mods/ModViewer    new (0.1.13,
                                                                     required)
 
 No game file is modified or replaced. A copy of the .NET 10 runtime goes into
@@ -117,14 +117,14 @@ and the mod lands in .../MelvorModLoader/mods/<ModName>/.
 The loader creates that folder on first start and always uses it on macOS.
 MELVOR_MODLOADER_MODS=/some/folder overrides the choice for one launch.
 
-Mod Viewer 0.1.12 is included in this package. The loader's top-bar Mods button
+Mod Viewer 0.1.13 is included in this package. The loader's top-bar Mods button
 or F1 opens it (F2 also works). Mod Viewer is part of the loader, so its Enable
 box is locked and it cannot be disabled. If it is missing, the loader shows an
 error and the loader should be reinstalled. install.sh always installs its own
 Mod Viewer copy. If another ModViewer exists under a different folder, the
 installer warns so you can remove the duplicate.
 
-Mod Viewer 0.1.12 opens the mods folder with the macOS "open" command and
+Mod Viewer 0.1.13 opens the mods folder with the macOS "open" command and
 restarts Steam with /bin/sh instead of PowerShell.
 
 Backup Saver 0.1.0 is also preinstalled. It copies your save files after startup

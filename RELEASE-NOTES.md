@@ -1,4 +1,4 @@
-# Mod Loader for MacOS 1.0.7
+# Mod Loader for MacOS 1.0.8
 
 An independent mod loader for **Melvor Idle 2**, packaged for macOS on Apple Silicon and Intel.
 
@@ -8,6 +8,11 @@ An independent mod loader for **Melvor Idle 2**, packaged for macOS on Apple Sil
 It implements the same public mod API as Melvor Mod Loader (`IMod`, `ModContext`,
 `GameAccess`, `ModWindow`, `Hotkeys`) so existing mod DLLs load unchanged. The
 implementation is new; it is not the original loader.
+
+## Changes in 1.0.8
+
+- Updated Mod Viewer to 0.1.13.
+- Mod Viewer's Required lock now applies only on macOS, so Windows users can still disable it.
 
 ## Changes in 1.0.7
 
@@ -26,7 +31,7 @@ implementation is new; it is not the original loader.
 - Uses Godot's standard `override.cfg` mechanism. No game file is modified or replaced.
 - The macOS package installs inside `Melvor Idle 2.app` and re-signs it ad-hoc; mods,
   settings, and logs stay in `~/Library/Application Support/MelvorModLoader`.
-- The macOS package includes **Mod Viewer 0.1.12** and **Backup Saver 0.1.0**.
+- The macOS package includes **Mod Viewer 0.1.13** and **Backup Saver 0.1.0**.
 - Backup Saver keeps the five newest save backups in
   `~/Library/Application Support/MelvorModLoader/backups`.
 - Installs with a readable `install.sh` script from Terminal; no unsigned installer `.app`.
@@ -41,7 +46,7 @@ There is no installer `.app`. The package uses readable `.command` scripts inste
 4. Start Melvor Idle 2 from Steam.
 
 If macOS blocks the `.command`, right-click it -> **Open**, or run `bash install.sh` in Terminal.
-The script finds the game, installs the required Mod Viewer 0.1.12, and re-signs the bundle
+The script finds the game, installs the required Mod Viewer 0.1.13, and re-signs the bundle
 ad-hoc. If the game is somewhere else: `bash install.sh "/path/to/Melvor Idle 2.app"`.
 
 ## Compatibility
@@ -51,8 +56,8 @@ contract existing mods reference. The product and implementation are Mod Loader 
 
 ## Package
 
-- `ModLoaderForMacOS-1.0.7-macos.zip` - SHA256
-  `218544D34444DB8C5D701CE3723873DB8186E83E0E20D3A888B5A98E0178E661`
+- `ModLoaderForMacOS-1.0.8-macos.zip` - SHA256
+  `228018476C1D532D66C5C801F7DA4A158FBAF9C53564CC7C249E14A38B218C38`
 
 The macOS package is experimental and has not been run on a physical Mac. The loader and
 all 14 3am mods compile against this API.
