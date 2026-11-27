@@ -76,7 +76,7 @@ mkdir -p "$SUPPORT" 2>/dev/null || true
 "$OSAS" -e 'display notification "Installing the loader..." with title "Mod Loader for MacOS"' >/dev/null 2>&1 || true
 
 if "$PKG/install.sh" "$APP" >"$LOG" 2>&1; then
-    button=$("$OSAS" -e 'button returned of (display dialog "Mod Loader for MacOS is installed. Mod Viewer is included unless you already had one. Start Melvor Idle 2 from Steam; the green loader line shows for 15 seconds." with title "Mod Loader for MacOS" buttons {"Later", "Start Game"} default button "Start Game" with icon note)' 2>/dev/null) || button="Later"
+    button=$("$OSAS" -e 'button returned of (display dialog "Mod Loader for MacOS is installed. Mod Viewer is included unless you already had one. Start Melvor Idle 2 from Steam; the blue loader status line shows at the bottom-left for 15 seconds." with title "Mod Loader for MacOS" buttons {"Later", "Start Game"} default button "Start Game" with icon note)' 2>/dev/null) || button="Later"
     if [ "$button" = "Start Game" ]; then
         open "steam://rungameid/3218350" >/dev/null 2>&1 || true
     fi

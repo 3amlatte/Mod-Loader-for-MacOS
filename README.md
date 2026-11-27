@@ -15,7 +15,8 @@ new; it is **not** the original Melvor Mod Loader.
 - A broken mod is logged and skipped; the game and other mods keep running.
 - Raises `ModContext.Frame` once per rendered frame, and pauses it while the game computes
   offline progress.
-- Shows a green line at the top-left for 15 seconds with the loader version and mod count.
+- Shows a blue status line at the bottom-left for 15 seconds with the loader version and mod
+  count, then fades it out.
 - Adds a **Mods** menu (top bar button, or F1) that lists every registered mod window and lets
   players change or switch off its key. Choices are stored in `mods/hotkeys.json`.
 - Uses Godot's own `override.cfg` mechanism: the loader starts first, then starts the game's

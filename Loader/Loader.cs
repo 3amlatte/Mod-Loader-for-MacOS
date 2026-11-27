@@ -108,15 +108,24 @@ public static class Loader
     static void ShowBanner()
     {
         var layer = new CanvasLayer { Layer = 128, Name = "ModLoaderForMacOSBanner" };
+        var blue = new Color(0.42f, 0.72f, 1f);
         var label = new Label
         {
-            Text = $"{Bootstrap.ProductName} {Version}  -  {s_loaded.Count} mod",
-            Position = new Vector2(8, 4),
-            Modulate = new Color(0.45f, 1f, 0.5f)
+            Text = $"{Bootstrap.ProductName} {Version}  -  {s_loaded.Count} mod{(s_loaded.Count == 1 ? "" : "s")} loaded",
+            Modulate = Colors.White,
+            MouseFilter = Control.MouseFilterEnum.Ignore
         };
         label.AddThemeFontSizeOverride("font_size", 14);
+        label.AddThemeColorOverride("font_color", blue);
+        label.AddThemeColorOverride("font_outline_color", new Color(0f, 0f, 0f, 0.85f));
+        label.AddThemeConstantOverride("outline_size", 4);
         layer.AddChild(label);
         s_tree.Root.AddChild(layer);
-        s_tree.CreateTimer(15.0).Timeout += layer.QueueFree;
+        label.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.BottomLeft, Control.LayoutPresetMode.Minsize, 12);
+
+        Tween fade = label.CreateTween();
+        fade.TweenInterval(13.5);
+        fade.TweenProperty(label, "modulate:a", 0f, 1.5);
+        fade.TweenCallback(Callable.From(layer.QueueFree));
     }
 }

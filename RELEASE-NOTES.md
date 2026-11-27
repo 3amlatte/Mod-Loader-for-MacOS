@@ -1,4 +1,4 @@
-# Mod Loader for MacOS 1.0.1
+# Mod Loader for MacOS 1.0.2
 
 An independent mod loader for **Melvor Idle 2**, packaged for macOS on Apple Silicon and Intel.
 
@@ -9,12 +9,19 @@ It implements the same public mod API as Melvor Mod Loader (`IMod`, `ModContext`
 `GameAccess`, `ModWindow`, `Hotkeys`) so existing mod DLLs load unchanged. The
 implementation is new; it is not the original loader.
 
+## Changes in 1.0.2
+
+- Moved the startup status line from the top-left to the bottom-left.
+- Changed it from green to blue and gave it an outline so it stays readable over the game.
+- Added a short fade-out at the end of the 15 seconds.
+
 ## Features
 
 - Loads every DLL under `mods` (flat or one folder deep).
 - A broken mod is logged and skipped; the game and other mods keep running.
 - Raises `ModContext.Frame` once per rendered frame, paused during offline progress.
-- Green loader line for 15 seconds with the version and mod count.
+- Blue status line at the bottom-left for 15 seconds with the version and mod count,
+  fading out at the end.
 - **Mods** button in the game's top bar (or F1): lists every mod panel, lets players
   change or switch off its key, and stores choices in `hotkeys.json`.
 - Uses Godot's standard `override.cfg` mechanism. No game file is modified or replaced.
@@ -39,8 +46,8 @@ contract existing mods reference. The product and implementation are Mod Loader 
 
 ## Package
 
-- `ModLoaderForMacOS-1.0.1-macos.zip` - SHA256
-  `23A22474C5AA644F06C16B65042E5A2F89CAF9020459AB3CB244CC9D11F4F32A`
+- `ModLoaderForMacOS-1.0.2-macos.zip` - SHA256
+  `F55AA32FF23A3A17FF23D791E707CA8B55B889CF0AAC5524BAF3F0E0DE9974CC`
 
 The macOS package is experimental and has not been run on a physical Mac. The loader and
 all 14 3am mods compile against this API.

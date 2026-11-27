@@ -1,4 +1,4 @@
-Mod Loader for MacOS 1.0.1 for macOS (experimental)
+Mod Loader for MacOS 1.0.2 for macOS (experimental)
 =================================================
 
 This is Mod Loader for MacOS, an independent loader for Melvor Idle 2. It keeps the public
@@ -56,11 +56,11 @@ On macOS the game is an .app bundle, so "the game folder" is inside it and there
        ~/Library/Application Support/MelvorModLoader/mods/
    Do this only if you do not already have a Mod Viewer. If you have an older
    copy from this project, replace that folder; leave a third-party one alone.
-5. Start the game from Steam. The green loader line shows for 15 seconds.
+5. Start the game from Steam. The blue loader status line shows at the bottom-left for 15 seconds.
 
 The result is the same files the installer app puts there. The only difference
 is the app signature: adding files invalidates it. Most Steam-installed copies
-still start, and the loader usually loads. If the green line does not appear
+still start, and the loader usually loads. If the blue line does not appear
 (or the game refuses to start), run Install Mod Loader for MacOS.app once; it
 re-copies the loader and re-signs the bundle. That is the reliable path.
 
