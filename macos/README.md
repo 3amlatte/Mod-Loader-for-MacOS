@@ -1,7 +1,7 @@
 # macOS build notes
 
 This folder holds the experimental macOS port: the packaging script, the installer, and the
-notes behind the layout. The loader C# code is shared with Windows.
+notes behind the layout.
 
 ## Why the layout is what it is
 
@@ -28,7 +28,7 @@ data folder per architecture; the installer copies the matching loader for each 
 
 ```powershell
 pwsh ./macos/build-macos.ps1 `
-  -GameData "/path/to/data_GamesByMalcs.Melvor2_windows_x86_64" `
+  -GameData "/path/to/data_GamesByMalcs.Melvor2_macos_arm64" `
   -ModViewerZip "/path/to/melvor-idle-2-mods/dist/ModViewer-0.1.11.zip"
 ```
 
@@ -39,7 +39,7 @@ present, updates an earlier copy from this project (`3am.mod`), and leaves a
 third-party Mod Viewer untouched.
 
 The compile-time references are the managed game DLLs. They are the same assemblies on every
-platform; only the native engine differs, so the Windows data folder is a valid reference even
+platform; only the native engine differs, so the game's managed data folder is a valid reference even
 when publishing for macOS. Output: `dist-macos/MelvorModLoader-<version>-macos.zip`.
 
 Without PowerShell, publish the two runtimes by hand and copy the results into the package
@@ -47,10 +47,10 @@ layout shown below:
 
 ```bash
 dotnet publish Loader/MelvorModLoader.csproj -c Release -r osx-arm64 \
-  -p:GameData="/path/to/data_GamesByMalcs.Melvor2_windows_x86_64" \
+  -p:GameData="/path/to/data_GamesByMalcs.Melvor2_macos_arm64" \\
   -p:UseAppHost=false -o /tmp/mml-arm64
 dotnet publish Loader/MelvorModLoader.csproj -c Release -r osx-x64 \
-  -p:GameData="/path/to/data_GamesByMalcs.Melvor2_windows_x86_64" \
+  -p:GameData="/path/to/data_GamesByMalcs.Melvor2_macos_arm64" \\
   -p:UseAppHost=false -o /tmp/mml-x64
 # /tmp/mml-arm64 -> arm64/data_MelvorModLoader_macos_arm64/
 # /tmp/mml-x64   -> x64/data_MelvorModLoader_macos_x86_64/
@@ -93,7 +93,7 @@ not signed by an Apple Developer certificate, so a downloaded copy needs
 right-click → Open once (or Open Anyway in System Settings).
 
 The root `arm64/`, `x64/`, `override.cfg` and `mods/ModViewer` items are the
-manual, Windows-style install: copy the loader folders and `override.cfg` into
+manual drag-and-drop install: copy the loader folders and `override.cfg` into
 the `.app`, and `ModViewer` into the mods folder under Application Support.
 
 ## Install
@@ -125,7 +125,7 @@ The installer:
   Godot's source; the game must be the C# export with a `data_*` folder, not `embed_build_outputs`).
 - That the ad-hoc `codesign --deep` pass succeeds on the shipped bundle and Gatekeeper is happy
   when Steam launches it.
-- That the game assembly from the macOS export has the same managed API as the Windows reference
+- That the game assembly from the macOS export has the same managed API as the compile-time reference
   used at compile time (expected: yes, same project and version).
 - Steam updates: they replace the bundle, so the installer has to be rerun.
 

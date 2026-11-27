@@ -39,6 +39,10 @@ Mod zips contain a top-level mods folder. Extract them into:
 LOG
 ~/Library/Application Support/MelvorModLoader/ModLoaderForMacOS.log
 
+WINDOWS
+This package is macOS-only. For Windows, use Melvor Mod Loader by falorfrozen:
+https://github.com/falorfrozen-cmd/MelvorModLoader
+
 UNINSTALL
 Double-click Uninstall Mod Loader for MacOS.app. Mods and settings stay in Application Support.
 

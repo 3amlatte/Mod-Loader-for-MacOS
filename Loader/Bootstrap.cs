@@ -100,8 +100,6 @@ internal static class Bootstrap
         {
             if (!Directory.Exists(root)) continue;
 
-            string windowsName = Path.Combine(root, "data_" + GameAssembly + "_windows_x86_64");
-            if (File.Exists(Path.Combine(windowsName, GameAssembly + ".dll"))) return windowsName;
 
             foreach (string candidate in Directory.GetDirectories(root, "data_*"))
                 if (File.Exists(Path.Combine(candidate, GameAssembly + ".dll")))

@@ -1,4 +1,4 @@
-Mod Loader for MacOS 1.0.0 for macOS (experimental)
+Mod Loader for MacOS 1.0.1 for macOS (experimental)
 =================================================
 
 This is Mod Loader for MacOS, an independent loader for Melvor Idle 2. It keeps the public
@@ -11,10 +11,15 @@ Requirements
 ------------
 - macOS 14 or newer (the .NET 10 minimum; if the game runs, yours is new enough),
   Apple Silicon or Intel.
-- Melvor Idle 2 from Steam (the native macOS build, not the Windows build under
-  Wine or a VM).
+- Melvor Idle 2 from Steam, the native macOS build.
 - The C# (Godot .NET) build of the game. The loader looks for
   Contents/Resources/data_GamesByMalcs.Melvor2_macos_* inside the app.
+
+
+Windows
+-------
+This package is macOS-only. For Windows, use Melvor Mod Loader by falorfrozen:
+https://github.com/falorfrozen-cmd/MelvorModLoader
 
 
 Easy install (double-click)
@@ -39,9 +44,7 @@ folders next to it. If something fails, click Show Log; the log is also at
 
 Manual install (drag and drop, no app)
 --------------------------------------
-On Windows you copy one folder and override.cfg into the game folder. On macOS
-the game is an .app bundle, so "the game folder" is inside it and there are two
-destinations:
+On macOS the game is an .app bundle, so "the game folder" is inside it and there are two destinations:
 
 1. Right-click Melvor Idle 2.app and choose "Show Package Contents".
 2. Copy the loader folder for your Mac from this package into Contents/Resources:
@@ -89,9 +92,9 @@ And in the mods folder:
                                                                     a Mod Viewer)
 
 No game file is modified or replaced. A copy of the .NET 10 runtime goes into
-each loader folder, exactly like the Windows package. The app bundle itself gets
+each loader folder. The app bundle itself gets
 the new files, and the installer app gives it a new ad-hoc signature; that is the
-macOS equivalent of adding files next to Melvor2.exe on Windows.
+macOS equivalent of adding files next to the game executable.
 
 The installer app additionally re-signs the bundle ad-hoc. macOS signs the whole
 .app, so any addition invalidates Apple's signature; re-signing recomputes it and

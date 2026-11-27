@@ -478,7 +478,7 @@ public static class Hotkeys
             hint.AddThemeColorOverride("font_color", Muted);
             box.AddChild(hint);
 
-            var group = new Label { Text = "MOD WINDOWS" };
+            var group = new Label { Text = "MOD PANELS" };
             group.AddThemeFontSizeOverride("font_size", 9);
             group.AddThemeColorOverride("font_color", Muted);
             box.AddChild(group);

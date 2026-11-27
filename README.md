@@ -31,6 +31,11 @@ new; it is **not** the original Melvor Mod Loader.
 The installer adds the loader inside `Melvor Idle 2.app` and re-signs the bundle ad-hoc. Manual
 and Terminal instructions are in `macos/README-MACOS.txt`.
 
+## Windows
+
+This project is macOS-only. For Windows, use Melvor Mod Loader by falorfrozen:
+https://github.com/falorfrozen-cmd/MelvorModLoader
+
 ## Build
 
 Requires the .NET 10 SDK and the game's managed DLLs.

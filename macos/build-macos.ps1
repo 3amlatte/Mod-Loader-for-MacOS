@@ -1,10 +1,9 @@
 # Builds the experimental macOS package.
 #
-# Run from Windows or macOS with the .NET 10 SDK:
-#   pwsh ./macos/build-macos.ps1 -GameData "/path/to/data_GamesByMalcs.Melvor2_windows_x86_64"
+# Run from macOS or another machine with the .NET 10 SDK:
+#   pwsh ./macos/build-macos.ps1 -GameData "/path/to/data_GamesByMalcs.Melvor2_macos_arm64"
 #
-# The compile-time references are the game's managed DLLs. They are the same on every
-# platform (the native engine is what differs), so the Windows data folder is fine.
+# The game's managed DLLs are the same on every platform; point this at the game data folder.
 #
 # Output: dist-macos/ModLoaderForMacOS-<version>-macos.zip
 #         dist-macos/ModLoaderForMacOS-<version>-macos.zip.sha256
@@ -15,7 +14,7 @@ param(
     [string] $Version,
 
     # The game's data folder (contains GamesByMalcs.Melvor2.dll and GodotSharp.dll).
-    # Defaults to MELVOR_GAMEDATA, then to <game>/data_GamesByMalcs.Melvor2_windows_x86_64
+    # Defaults to MELVOR_GAMEDATA, then to <game>/data_GamesByMalcs.Melvor2_macos_arm64
     # when this repository is cloned into the game folder as MelvorModLoader_src.
     [string] $GameData,
 
@@ -49,7 +48,7 @@ if (-not $Version) {
 if (-not $GameData) { $GameData = $env:MELVOR_GAMEDATA }
 
 if (-not $GameData) {
-    $relative = Join-Path $root '..\..\data_GamesByMalcs.Melvor2_windows_x86_64'
+    $relative = Join-Path $root '..\..\data_GamesByMalcs.Melvor2_macos_arm64'
     if (Test-Path -LiteralPath (Join-Path $relative 'GamesByMalcs.Melvor2.dll')) {
         $GameData = (Resolve-Path -LiteralPath $relative).ProviderPath
     }
@@ -92,7 +91,7 @@ Write-Host "  output:     $outDir"
 if (Test-Path -LiteralPath $stageRoot) { Remove-Item -LiteralPath $stageRoot -Recurse -Force }
 New-Item -ItemType Directory -Force -Path $packageRoot | Out-Null
 
-# The loader payload and the real scripts stay at the package root, like the Windows
+# The loader payload and the real scripts stay at the package root, so the
 # zip, so they can also be copied into the .app by hand. The .app bundles are thin
 # shell-script wrappers that show native dialogs and call install.sh / uninstall.sh.
 $installApp = Join-Path $packageRoot 'Install Mod Loader for MacOS.app'
@@ -140,7 +139,7 @@ foreach ($arch in $Architectures) {
 }
 
 # The apps are thin wrappers. The payload and the real scripts stay at the package
-# root, like the Windows zip, so a manual drag-and-drop install is possible.
+# package also supports a manual drag-and-drop install.
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'installer-app.sh') `
     -Destination (Join-Path $installMacOS 'install-mod-loader-for-macos') -Force
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'uninstaller-app.sh') `
@@ -199,7 +198,7 @@ foreach ($app in @($installApp, $uninstallApp)) {
         [Text.Encoding]::ASCII)
 }
 
-# Top-level files: the same pieces the Windows package has, so they can be copied
+# Top-level files: the pieces that can be copied
 # into the .app by hand. The two .app bundles above are just optional UI wrappers.
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'install.sh') -Destination $packageRoot -Force
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'uninstall.sh') -Destination $packageRoot -Force
