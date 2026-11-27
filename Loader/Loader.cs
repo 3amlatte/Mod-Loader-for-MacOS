@@ -29,6 +29,13 @@ public static class Loader
             LoadMods();
             s_tree.ProcessFrame += EveryFrame;
             ShowBanner();
+
+            if (!s_loaded.Any(name => name.Equals("ModViewer", StringComparison.OrdinalIgnoreCase)))
+            {
+                const string message = "Mod Viewer is missing or did not load. Reinstall Mod Loader for MacOS.";
+                Log.Write("Loader ERROR: " + message);
+                ShowError(message);
+            }
         }
         catch (Exception error)
         {
@@ -127,5 +134,43 @@ public static class Loader
         fade.TweenInterval(13.5);
         fade.TweenProperty(label, "modulate:a", 0f, 1.5);
         fade.TweenCallback(Callable.From(layer.QueueFree));
+    }
+
+    internal static void ShowError(string message)
+    {
+        try
+        {
+            if (s_tree == null)
+            {
+                Log.Write("Loader ERROR: " + message);
+                return;
+            }
+
+            var layer = new CanvasLayer { Layer = 129, Name = "ModLoaderForMacOSError" };
+            var red = new Color(1f, 0.45f, 0.45f);
+            var label = new Label
+            {
+                Text = message,
+                Modulate = Colors.White,
+                MouseFilter = Control.MouseFilterEnum.Ignore
+            };
+            label.AddThemeFontSizeOverride("font_size", 16);
+            label.AddThemeColorOverride("font_color", red);
+            label.AddThemeColorOverride("font_outline_color", new Color(0f, 0f, 0f, 0.9f));
+            label.AddThemeConstantOverride("outline_size", 4);
+            layer.AddChild(label);
+            s_tree.Root.AddChild(layer);
+            label.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.TopLeft,
+                Control.LayoutPresetMode.Minsize, 12);
+
+            Tween fade = label.CreateTween();
+            fade.TweenInterval(25.0);
+            fade.TweenProperty(label, "modulate:a", 0f, 1.5);
+            fade.TweenCallback(Callable.From(layer.QueueFree));
+        }
+        catch (Exception error)
+        {
+            Log.Write($"Loader ERROR: {message} (could not show it: {error.Message})");
+        }
     }
 }

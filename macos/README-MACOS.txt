@@ -1,4 +1,4 @@
-Mod Loader for MacOS 1.0.4 for macOS (experimental)
+Mod Loader for MacOS 1.0.5 for macOS (experimental)
 =================================================
 
 This is Mod Loader for MacOS, an independent loader for Melvor Idle 2. It keeps the public
@@ -88,7 +88,7 @@ Inside Melvor Idle 2.app:
 
 And in the mods folder:
 
-    ~/Library/Application Support/MelvorModLoader/mods/ModViewer    new (0.1.11,
+    ~/Library/Application Support/MelvorModLoader/mods/ModViewer    new (0.1.12,
                                                                     unless you
                                                                     already have
                                                                     a Mod Viewer)
@@ -117,15 +117,17 @@ and the mod lands in .../MelvorModLoader/mods/<ModName>/.
 The loader creates that folder on first start and always uses it on macOS.
 MELVOR_MODLOADER_MODS=/some/folder overrides the choice for one launch.
 
-Mod Viewer 0.1.11 is included in this package. The loader's top-bar Mods button
-opens it (F2 also works); F1 opens the loader's Mod panels menu for changing hotkeys.
-install.sh adds Mod Viewer only when no Mod Viewer is already in the mods folder. An earlier copy from this project
+Mod Viewer 0.1.12 is included in this package. The loader's top-bar Mods button
+or F1 opens it (F2 also works). Mod Viewer is part of the loader, so its Enable
+box is locked and it cannot be disabled. If it is missing, the loader shows an
+error and the loader should be reinstalled. install.sh always installs its own
+Mod Viewer copy. An earlier copy from this project
 (its folder has a 3am.mod marker) is updated in place. A Mod Viewer from someone
 else is left untouched, and nothing in mods-disabled is deleted. Your Mod Viewer
 settings and groups are kept. To switch from another Mod Viewer to the bundled
 one, delete the other folder yourself first.
 
-Mod Viewer 0.1.11 opens the mods folder with the macOS "open" command and
+Mod Viewer 0.1.12 opens the mods folder with the macOS "open" command and
 restarts Steam with /bin/sh instead of PowerShell.
 
 Most other mods are net10.0 class libraries and are platform-neutral. F1-F9 may

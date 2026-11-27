@@ -104,28 +104,23 @@ if [ -f "$HERE/README-MACOS.txt" ]; then
 fi
 say "  mods folder  -> $MODS"
 
-# Mod Viewer ships with this package. Install it only when no Mod Viewer is present,
-# and update only an earlier copy from this project (its folder has 3am.mod).
-# Never delete a third-party Mod Viewer, a disabled one, or anything else in mods.
+# Mod Viewer is part of the loader: always install/update our copy. It is the only
+# mod panel UI and cannot be disabled from inside Mod Viewer.
 VIEWER_SRC="$HERE/mods/ModViewer"
 if [ -d "$VIEWER_SRC" ]; then
-    viewer_flat=$(find "$MODS" -maxdepth 1 -iname 'modviewer.dll' -print 2>/dev/null | head -n 1)
     viewer_other=$(find "$MODS" -mindepth 2 -maxdepth 2 -iname 'modviewer.dll' \
         ! -path "$MODS/ModViewer/ModViewer.dll" -print 2>/dev/null | head -n 1)
-
-    if [ -n "$viewer_flat" ] || [ -n "$viewer_other" ]; then
-        say "  Mod Viewer: another ModViewer is already installed; left it alone"
-    elif [ -d "$MODS/ModViewer" ] && [ ! -f "$MODS/ModViewer/3am.mod" ]; then
-        say "  Mod Viewer: an existing ModViewer was left untouched"
-    else
-        # No Mod Viewer, or our own earlier copy: install/update the bundled one.
-        rm -rf "$MODS/ModViewer" 2>/dev/null || true
-        mkdir -p "$MODS/ModViewer"
-        cp -R "$VIEWER_SRC/." "$MODS/ModViewer/"
-        say "  Mod Viewer   -> $MODS/ModViewer"
+    if [ -n "$viewer_other" ]; then
+        warn "Another Mod Viewer is installed at $viewer_other"
+        warn "The bundled Mod Viewer is required; remove the other ModViewer folder to avoid two."
     fi
+
+    rm -rf "$MODS/ModViewer" 2>/dev/null || true
+    mkdir -p "$MODS/ModViewer"
+    cp -R "$VIEWER_SRC/." "$MODS/ModViewer/"
+    say "  Mod Viewer   -> $MODS/ModViewer"
 else
-    warn "The bundled Mod Viewer was not found; installing the loader without it."
+    die "The bundled Mod Viewer was not found. This package is incomplete; reinstall it."
 fi
 
 # Any change inside a signed .app invalidates Apple's signature. Re-signing the bundle

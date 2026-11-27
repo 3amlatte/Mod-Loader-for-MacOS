@@ -39,7 +39,7 @@ public readonly record struct KeyChord(Key Key, bool Ctrl = false, bool Shift = 
     }
 }
 
-/// <summary>A mod window listed in the Mods menu.</summary>
+/// <summary>A mod panel that Mod Viewer can open.</summary>
 public sealed class ModWindow
 {
     internal ModWindow(string id, string mod, string title, Action toggle, KeyChord defaultKey)
@@ -77,17 +77,13 @@ public sealed class ModWindow
     }
 }
 
-/// <summary>Shared keys and the Mods menu.</summary>
+/// <summary>Registers mod panels, the F1/F2 Mod Viewer shortcut, and the top-bar Mods button.</summary>
 public static class Hotkeys
 {
     public const string MenuId = "MelvorModLoader:Mods";
 
     static readonly List<ModWindow> s_windows = new();
     static Dictionary<string, string> s_saved = new();
-    static MenuView? s_menu;
-    static ModWindow? s_capturing;
-    static Key s_ignore = Key.None;
-    static bool s_escapeWasDown;
     static int s_frame;
     static Button? s_button;
     static CanvasLayer? s_floatingLayer;
@@ -95,8 +91,10 @@ public static class Hotkeys
 
     public static ModWindow Menu { get; private set; } = null!;
     public static IReadOnlyList<ModWindow> Windows => s_windows;
-    public static bool MenuVisible => s_menu is { Visible: true };
-    public static ModWindow? Capturing => s_capturing;
+
+    // Kept for binary compatibility. There is no separate panel menu any more.
+    public static bool MenuVisible => false;
+    public static ModWindow? Capturing => null;
 
     static string FilePath => Path.Combine(Bootstrap.ModsDir, "hotkeys.json");
 
@@ -113,7 +111,7 @@ public static class Hotkeys
             s_saved = new();
         }
 
-        Menu = Add("MelvorModLoader", "Mods", ToggleMenu, new KeyChord(Key.F1));
+        Menu = Add("MelvorModLoader", "Mods", ToggleModViewer, new KeyChord(Key.F1));
         EnsureButton((SceneTree)Engine.GetMainLoop());
     }
 
@@ -124,30 +122,30 @@ public static class Hotkeys
         if (old != null) s_windows.Remove(old);
 
         var window = new ModWindow(id, mod, title, toggle, defaultKey);
-        if (s_saved.TryGetValue(id, out string? saved)) window.Key = KeyChord.Parse(saved);
+        // F1 always opens Mod Viewer, even if an older hotkeys.json changed it.
+        if (id != MenuId && s_saved.TryGetValue(id, out string? saved))
+            window.Key = KeyChord.Parse(saved);
         s_windows.Add(window);
 
         foreach (ModWindow other in s_windows.Where(w => w != window && !w.Key.IsNone && w.Key == window.Key))
             Log.Write($"Key {window.KeyLabel} is shared by '{other.Title}' and '{window.Title}'.");
 
-        s_menu?.Rebuild();
         return window;
     }
 
     public static void SetKey(ModWindow window, KeyChord key)
     {
+        if (window.Id == MenuId) key = new KeyChord(Key.F1);
         window.Key = key;
         window.WasDown = true;
         if (key == window.DefaultKey) s_saved.Remove(window.Id);
         else s_saved[window.Id] = key.IsNone ? "None" : key.ToString();
         Save();
         window.RaiseChanged();
-        s_menu?.Rebuild();
     }
 
     public static void ResetAll()
     {
-        s_capturing = null;
         foreach (ModWindow window in s_windows.Where(w => w.Key != w.DefaultKey).ToList())
         {
             window.Key = window.DefaultKey;
@@ -156,24 +154,14 @@ public static class Hotkeys
 
         s_saved.Clear();
         Save();
-        s_menu?.Rebuild();
     }
 
     public static IEnumerable<ModWindow> SharingKey(ModWindow window) =>
         window.Key.IsNone ? Enumerable.Empty<ModWindow>() : s_windows.Where(w => w != window && w.Key == window.Key);
 
-    public static void BeginCapture(ModWindow window)
-    {
-        s_capturing = window;
-        s_menu?.Rebuild();
-    }
-
-    public static void CancelCapture()
-    {
-        s_capturing = null;
-        s_ignore = Key.Escape;
-        s_menu?.Rebuild();
-    }
+    // Kept for binary compatibility with older mods. Keys are edited by Mod Viewer now.
+    public static void BeginCapture(ModWindow window) { }
+    public static void CancelCapture() { }
 
     static void Save()
     {
@@ -192,39 +180,26 @@ public static class Hotkeys
         window.Title.Equals("Mod Viewer", StringComparison.OrdinalIgnoreCase) &&
         window.Mod.Equals("ModViewer", StringComparison.OrdinalIgnoreCase));
 
-    static void OpenModsButton()
+    static void ToggleModViewer()
     {
         ModWindow? viewer = ViewerWindow();
-        if (viewer != null) viewer.Press();
-        else ToggleMenu();
-    }
-
-    public static void ToggleMenu()
-    {
-        if (s_menu is { Visible: true })
+        if (viewer != null)
         {
-            s_menu.Close();
+            viewer.Press();
             return;
         }
 
-        s_menu ??= new MenuView();
-        s_menu.Open();
+        const string message = "Mod Viewer is missing or did not load. Reinstall Mod Loader for MacOS.";
+        Log.Write("Loader ERROR: " + message);
+        Loader.ShowError(message);
     }
+
+    // Kept for API compatibility. F1 and the Mods button now open Mod Viewer.
+    public static void ToggleMenu() => ToggleModViewer();
 
     internal static void OnFrame(SceneTree tree)
     {
         if (++s_frame % 60 == 0) EnsureButton(tree);
-        if (s_capturing != null) { Capture(); return; }
-
-        if (s_ignore != Key.None)
-        {
-            if (Input.IsKeyPressed(s_ignore)) return;
-            s_ignore = Key.None;
-        }
-
-        bool escape = Input.IsKeyPressed(Key.Escape);
-        if (escape && !s_escapeWasDown && s_menu is { Visible: true }) s_menu.Close();
-        s_escapeWasDown = escape;
 
         bool typing = tree.Root.GuiGetFocusOwner() is LineEdit or TextEdit;
         bool ctrl = Input.IsKeyPressed(Key.Ctrl);
@@ -234,6 +209,13 @@ public static class Hotkeys
         foreach (ModWindow window in s_windows.ToList())
         {
             if (window.Key.IsNone)
+            {
+                window.WasDown = false;
+                continue;
+            }
+
+            // F1 is reserved for Mod Viewer; other mods may still use modified F1 chords.
+            if (window.Id != MenuId && window.Key.Key == Key.F1 && !window.Key.Ctrl && !window.Key.Shift && !window.Key.Alt)
             {
                 window.WasDown = false;
                 continue;
@@ -252,52 +234,6 @@ public static class Hotkeys
     }
 
     static bool IsFunctionKey(Key key) => key >= Key.F1 && key <= Key.F35;
-
-    static readonly Key[] s_choosable = BuildChoosable();
-
-    static Key[] BuildChoosable()
-    {
-        var keys = new List<Key>();
-        for (Key key = Key.F1; key <= Key.F12; key++) keys.Add(key);
-        for (Key key = Key.A; key <= Key.Z; key++) keys.Add(key);
-        for (Key key = Key.Key0; key <= Key.Key9; key++) keys.Add(key);
-        for (Key key = Key.Kp0; key <= Key.Kp9; key++) keys.Add(key);
-        keys.AddRange(new[]
-        {
-            Key.Insert, Key.Delete, Key.Home, Key.End, Key.Pageup, Key.Pagedown, Key.Pause, Key.Scrolllock,
-            Key.Quoteleft, Key.Minus, Key.Equal, Key.Bracketleft, Key.Bracketright, Key.Backslash, Key.Semicolon,
-            Key.Apostrophe, Key.Comma, Key.Period, Key.Slash, Key.KpAdd, Key.KpSubtract, Key.KpMultiply, Key.KpDivide
-        });
-        return keys.ToArray();
-    }
-
-    static void Capture()
-    {
-        if (s_ignore != Key.None)
-        {
-            if (Input.IsKeyPressed(s_ignore)) return;
-            s_ignore = Key.None;
-        }
-
-        if (Input.IsKeyPressed(Key.Escape))
-        {
-            CancelCapture();
-            return;
-        }
-
-        foreach (Key key in s_choosable)
-        {
-            if (!Input.IsKeyPressed(key)) continue;
-            ModWindow window = s_capturing!;
-            s_capturing = null;
-            s_ignore = key;
-            SetKey(window, new KeyChord(key,
-                Input.IsKeyPressed(Key.Ctrl),
-                Input.IsKeyPressed(Key.Shift),
-                Input.IsKeyPressed(Key.Alt)));
-            return;
-        }
-    }
 
     static void EnsureButton(SceneTree tree)
     {
@@ -383,7 +319,7 @@ public static class Hotkeys
         button.AddThemeStyleboxOverride("focus", new StyleBoxEmpty());
         button.AddThemeStyleboxOverride("hover", hover);
         button.AddThemeStyleboxOverride("pressed", hover);
-        button.Pressed += OpenModsButton;
+        button.Pressed += ToggleModViewer;
         return button;
     }
 
@@ -398,213 +334,13 @@ public static class Hotkeys
     {
         if (s_button == null) return;
         ModWindow? viewer = ViewerWindow();
-        string label = viewer == null ? "Mod panels" : "Mod Viewer";
-        string key = viewer == null ? Menu.KeyLabel : viewer.KeyLabel;
-        bool clash = s_windows.Any(window => SharingKey(window).Any());
-        s_button.TooltipText = label + (key.Length == 0 ? "" : $"  ({key})")
+        string key = Menu.KeyLabel;
+        if (viewer != null && viewer.KeyLabel.Length > 0 && viewer.KeyLabel != key)
+            key += " / " + viewer.KeyLabel;
+        s_button.TooltipText = "Mod Viewer" + (key.Length == 0 ? "" : $"  ({key})")
                                + (viewer == null
-                                   ? "\nOpen the loader's panel and key menu."
-                                   : "\nOpen Mod Viewer.")
-                               + (clash ? "\nTwo mods share a key: press F1 to fix it." : "");
-        s_button.Modulate = clash ? new Color(1f, 0.8f, 0.5f) : Colors.White;
-    }
-
-    sealed class MenuView
-    {
-        static readonly Color Accent = new(0.886f, 0.694f, 0.361f);
-        static readonly Color Muted = new(0.60f, 0.64f, 0.70f);
-        static readonly Color Text = new(0.91f, 0.93f, 0.95f);
-        static readonly Color Card = new(0.071f, 0.110f, 0.145f);
-        static readonly Color Line = new(0.145f, 0.200f, 0.250f);
-
-        readonly CanvasLayer _layer;
-        readonly VBoxContainer _list;
-        readonly Label _status;
-
-        public bool Visible
-        {
-            get => _layer.Visible;
-            set => _layer.Visible = value;
-        }
-
-        public MenuView()
-        {
-            _layer = new CanvasLayer { Layer = 130, Name = "ModLoaderForMacOSMenu", Visible = false };
-            var root = new Control { MouseFilter = Control.MouseFilterEnum.Ignore };
-            root.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
-            _layer.AddChild(root);
-
-            var dim = new ColorRect
-            {
-                Color = new Color(0, 0, 0, 0.58f),
-                MouseFilter = Control.MouseFilterEnum.Stop
-            };
-            dim.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
-            root.AddChild(dim);
-
-            var center = new CenterContainer();
-            center.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
-            root.AddChild(center);
-
-            var panel = new PanelContainer { CustomMinimumSize = new Vector2(660, 0) };
-            var panelStyle = new StyleBoxFlat
-            {
-                BgColor = new Color(0.051f, 0.078f, 0.106f),
-                BorderColor = new Color(0.886f, 0.694f, 0.361f, 0.80f)
-            };
-            panelStyle.SetBorderWidthAll(1);
-            panelStyle.SetCornerRadiusAll(12);
-            panelStyle.ContentMarginLeft = 14;
-            panelStyle.ContentMarginRight = 14;
-            panelStyle.ContentMarginTop = 12;
-            panelStyle.ContentMarginBottom = 12;
-            panel.AddThemeStyleboxOverride("panel", panelStyle);
-            center.AddChild(panel);
-
-            var box = new VBoxContainer();
-            box.AddThemeConstantOverride("separation", 9);
-            panel.AddChild(box);
-
-            var header = new HBoxContainer();
-            var heading = new VBoxContainer();
-            heading.AddThemeConstantOverride("separation", 0);
-            var title = new Label { Text = "Mod panels" };
-            title.AddThemeFontSizeOverride("font_size", 22);
-            title.AddThemeColorOverride("font_color", Accent);
-            heading.AddChild(title);
-            var subtitle = new Label { Text = "Mod Loader for MacOS" };
-            subtitle.AddThemeFontSizeOverride("font_size", 9);
-            subtitle.AddThemeColorOverride("font_color", Muted);
-            heading.AddChild(subtitle);
-            header.AddChild(heading);
-            header.AddChild(new Control { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill });
-            var close = new Button { Text = "Close" };
-            close.Pressed += Close;
-            header.AddChild(close);
-            box.AddChild(header);
-
-            var hint = new Label
-            {
-                Text = "Click a panel's name to open it. Click its key to change it, or press Off to free it. "
-                     + "Choices are kept in hotkeys.json. Press F1 to reopen this menu; the top-bar Mods "
-                     + "button opens Mod Viewer.",
-                AutowrapMode = TextServer.AutowrapMode.WordSmart
-            };
-            hint.AddThemeFontSizeOverride("font_size", 11);
-            hint.AddThemeColorOverride("font_color", Muted);
-            box.AddChild(hint);
-
-            var group = new Label { Text = "MOD PANELS" };
-            group.AddThemeFontSizeOverride("font_size", 9);
-            group.AddThemeColorOverride("font_color", Muted);
-            box.AddChild(group);
-
-            var scroll = new ScrollContainer
-            {
-                CustomMinimumSize = new Vector2(0, 340),
-                SizeFlagsVertical = Control.SizeFlags.ExpandFill
-            };
-            _list = new VBoxContainer { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
-            _list.AddThemeConstantOverride("separation", 4);
-            scroll.AddChild(_list);
-            box.AddChild(scroll);
-
-            var footer = new HBoxContainer();
-            _status = new Label { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
-            _status.AddThemeFontSizeOverride("font_size", 11);
-            _status.AddThemeColorOverride("font_color", Muted);
-            footer.AddChild(_status);
-            var reset = new Button { Text = "Reset all keys" };
-            reset.Pressed += ResetAll;
-            footer.AddChild(reset);
-            box.AddChild(footer);
-
-            ((SceneTree)Engine.GetMainLoop()).Root.AddChild(_layer);
-        }
-
-        public void Open()
-        {
-            Visible = true;
-            Rebuild();
-        }
-
-        public void Close()
-        {
-            Visible = false;
-            s_capturing = null;
-        }
-
-        public void Rebuild()
-        {
-            if (!Visible) return;
-
-            foreach (Node child in _list.GetChildren())
-            {
-                _list.RemoveChild(child);
-                child.QueueFree();
-            }
-
-            foreach (ModWindow window in s_windows)
-                _list.AddChild(Row(window));
-
-            _status.Text = s_capturing != null
-                ? "Press a key. Escape cancels."
-                : s_windows.Any(window => SharingKey(window).Any())
-                    ? "Two mods share a key. Change one of them."
-                    : "F1 opens this menu. The menu key can be changed like any other.";
-        }
-
-        Control Row(ModWindow window)
-        {
-            var card = new PanelContainer();
-            var cardStyle = new StyleBoxFlat { BgColor = Card, BorderColor = Line };
-            cardStyle.SetBorderWidthAll(1);
-            cardStyle.SetCornerRadiusAll(6);
-            cardStyle.ContentMarginLeft = 10;
-            cardStyle.ContentMarginRight = 8;
-            cardStyle.ContentMarginTop = 6;
-            cardStyle.ContentMarginBottom = 6;
-            card.AddThemeStyleboxOverride("panel", cardStyle);
-
-            var row = new HBoxContainer();
-            row.AddThemeConstantOverride("separation", 8);
-            card.AddChild(row);
-
-            var info = new VBoxContainer { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
-            info.AddThemeConstantOverride("separation", 0);
-            var open = new Button
-            {
-                Text = window.Title,
-                TooltipText = window.Mod,
-                Flat = true,
-                Alignment = HorizontalAlignment.Left,
-                SizeFlagsHorizontal = Control.SizeFlags.ExpandFill
-            };
-            open.AddThemeColorOverride("font_color", Text);
-            open.AddThemeFontSizeOverride("font_size", 13);
-            open.Pressed += window.Press;
-            info.AddChild(open);
-
-            var modName = new Label { Text = window.Mod };
-            modName.AddThemeFontSizeOverride("font_size", 9);
-            modName.AddThemeColorOverride("font_color", Muted);
-            info.AddChild(modName);
-            row.AddChild(info);
-
-            string keyText = s_capturing == window
-                ? "Press a key..."
-                : window.Key.IsNone ? "Off" : window.KeyLabel;
-            var key = new Button { Text = keyText, CustomMinimumSize = new Vector2(140, 0) };
-            key.Pressed += () => BeginCapture(window);
-            key.AddThemeColorOverride("font_color", s_capturing == window || !window.Key.IsNone ? Accent : Muted);
-            if (SharingKey(window).Any()) key.Modulate = new Color(1f, 0.72f, 0.4f);
-            row.AddChild(key);
-
-            var off = new Button { Text = "Off" };
-            off.Pressed += () => SetKey(window, KeyChord.None);
-            row.AddChild(off);
-
-            return card;
-        }
+                                   ? "\nMod Viewer did not load. Reinstall the loader."
+                                   : "\nOpen Mod Viewer.");
+        s_button.Modulate = viewer == null ? new Color(1f, 0.55f, 0.55f) : Colors.White;
     }
 }
