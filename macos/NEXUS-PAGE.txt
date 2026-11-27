@@ -1,0 +1,58 @@
+TITLE
+Mod Loader for MacOS
+
+SUMMARY
+An independent mod loader for Melvor Idle 2 on macOS: loads C# mods from a mods folder, keeps failures isolated, and includes a double-click installer for Apple Silicon and Intel.
+
+DESCRIPTION
+Mod Loader for MacOS is an independent loader for Melvor Idle 2. It loads the same C# mods as the
+Windows ecosystem and implements the same public mod API, so existing mods work without changes.
+
+WHAT IT DOES
+- Loads mods. Every mod is a folder under mods. Add a folder to install one, delete it to remove it.
+- Starts first. Godot's standard override.cfg makes the loader start before the game, then the
+  loader starts the game's own untouched managed code. No game file is modified or replaced.
+- Keeps mods apart. A mod that fails is written to the log and skipped. The game and the other
+  mods keep running.
+- Stays out of the way. A green line at the top-left shows the loader version and mod count for
+  15 seconds at start.
+- Protects offline progress. Mods receive no frames while the game computes offline progress.
+- One menu. A Mods button (or F1) lists every mod window. Click a name to open it, click its key
+  to change it, or press Off to free it. Choices are stored in mods/hotkeys.json.
+
+INSTALL (macOS)
+1. Quit Melvor Idle 2.
+2. Unzip the package.
+3. Double-click Install Mod Loader for MacOS.app.
+4. If macOS cannot verify the app, right-click it -> Open -> Open, or use System Settings ->
+   Privacy & Security -> Open Anyway.
+5. Click Install, then Start Game.
+
+The installer adds the loader inside Melvor Idle 2.app and re-signs the bundle ad-hoc. No game
+file is modified or replaced. Steam updates replace the app; run the installer again afterwards.
+
+MODS FOLDER
+~/Library/Application Support/MelvorModLoader/mods
+
+Mod zips contain a top-level mods folder. Extract them into:
+~/Library/Application Support/MelvorModLoader
+
+LOG
+~/Library/Application Support/MelvorModLoader/ModLoaderForMacOS.log
+
+UNINSTALL
+Double-click Uninstall Mod Loader for MacOS.app. Mods and settings stay in Application Support.
+
+COMPATIBILITY
+The assembly name and public API names are kept for compatibility with existing mod DLLs. This
+project is an independent implementation, not the original Melvor Mod Loader. Existing mods load
+unchanged.
+
+REQUIREMENTS
+- macOS 14 or newer (the .NET 10 minimum), Apple Silicon or Intel.
+- Melvor Idle 2 from Steam, the native macOS C# build.
+- Windows package: Windows 10 or newer, same game build.
+
+CREDITS
+Melvor Idle 2 is made by Games by Malcs. This is an unofficial fan project and contains none of
+the game's files. The included .NET runtime is Microsoft's, under the MIT license.

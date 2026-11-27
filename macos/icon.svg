@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Mod Loader for MacOS icon</title>
+  <desc id="desc">A gold tile with a dark M and a small dot.</desc>
+  <rect x="16" y="16" width="480" height="480" rx="116" fill="#E2B15C"/>
+  <path d="M144 366V164l112 91 112-91v202" fill="none" stroke="#0B1117" stroke-width="46"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="396" cy="130" r="22" fill="#0B1117"/>
+</svg>

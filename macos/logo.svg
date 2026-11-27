@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360" role="img" aria-labelledby="title desc">
+  <title id="title">Mod Loader for MacOS</title>
+  <desc id="desc">A simple vector lockup: a gold M tile and the words Mod Loader for MacOS.</desc>
+
+  <rect width="1280" height="360" rx="32" fill="#0B1117"/>
+  <rect x="1" y="1" width="1278" height="358" rx="31" fill="none" stroke="#253440"/>
+
+  <g transform="translate(64 64)">
+    <rect width="232" height="232" rx="56" fill="#E2B15C"/>
+    <path d="M62 170V70l54 44 54-44v100" fill="none" stroke="#0B1117" stroke-width="22"
+          stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="190" cy="56" r="10" fill="#0B1117"/>
+  </g>
+
+  <text x="346" y="198" fill="#F2F6FA"
+        font-family="'SF Pro Display', 'Segoe UI', Helvetica, Arial, sans-serif"
+        font-size="76" font-weight="800" letter-spacing="-1.2">
+    <tspan fill="#F2F6FA" font-weight="800">Mod Loader</tspan><tspan dx="10" fill="#93A4B8" font-weight="500" font-size="40">for</tspan><tspan dx="10" fill="#7FD3C4" font-weight="600">MacOS</tspan>
+  </text>
+
+  <text x="350" y="260" fill="#E2B15C"
+        font-family="'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif"
+        font-size="21" font-weight="600" letter-spacing="7">FOR MELVOR IDLE 2</text>
+</svg>
