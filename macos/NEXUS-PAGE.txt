@@ -16,8 +16,10 @@ WHAT IT DOES
 - Stays out of the way. A blue status line at the bottom-left shows the loader version and mod
   count for 15 seconds at start, then fades out.
 - Protects offline progress. Mods receive no frames while the game computes offline progress.
-- One menu. A Mods button (or F1) lists every mod window. Click a name to open it, click its key
-  to change it, or press Off to free it. Choices are stored in mods/hotkeys.json.
+- One menu. A Mods button (or F1) lists every mod panel. Click a name to open it, click its key
+  to change it, or press Off to free it. Choices are stored in mods/hotkeys.json. This is the
+  loader's own panel/hotkey menu, not Mod Viewer. Mod Viewer is a separate mod included in the
+  package; it lists installed mods and opens with F2.
 
 INSTALL (macOS)
 There is no installer app. Install from Terminal with the readable install.sh script:

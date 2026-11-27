@@ -29,7 +29,9 @@ implementation is new; it is not the original loader.
 - Blue status line at the bottom-left for 15 seconds with the version and mod count,
   fading out at the end.
 - **Mods** button in the game's top bar (or F1): lists every mod panel, lets players
-  change or switch off its key, and stores choices in `hotkeys.json`.
+  change or switch off its key, and stores choices in `hotkeys.json`. This is the loader's
+  panel/hotkey menu, not Mod Viewer. Mod Viewer is a separate mod included in the package;
+  it lists installed mods and opens with F2.
 - Uses Godot's standard `override.cfg` mechanism. No game file is modified or replaced.
 - The macOS package installs inside `Melvor Idle 2.app` and re-signs it ad-hoc; mods,
   settings, and logs stay in `~/Library/Application Support/MelvorModLoader`.

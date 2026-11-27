@@ -17,8 +17,10 @@ new; it is **not** the original Melvor Mod Loader.
   offline progress.
 - Shows a blue status line at the bottom-left for 15 seconds with the loader version and mod
   count, then fades it out.
-- Adds a **Mods** menu (top bar button, or F1) that lists every registered mod window and lets
-  players change or switch off its key. Choices are stored in `mods/hotkeys.json`.
+- Adds a **Mods** menu (top bar button, or F1) that lists every registered mod panel and lets
+  players change or switch off its key. Choices are stored in `mods/hotkeys.json`. This is the
+  loader's own panel/hotkey menu, not Mod Viewer. Mod Viewer is a separate mod included in the
+  package; it lists installed mods and opens with F2.
 - Uses Godot's own `override.cfg` mechanism: the loader starts first, then starts the game's
   untouched managed code. No game file is modified or replaced.
 - On macOS, mods, settings, and logs live in `~/Library/Application Support/MelvorModLoader`,
