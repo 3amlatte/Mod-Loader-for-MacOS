@@ -173,7 +173,7 @@ if ($ModViewerZip) {
     Write-Host "  bundled Mod Viewer: $([IO.Path]::GetFileName($ModViewerZip))"
 }
 else {
-    Write-Warning "No Mod Viewer zip found. Pass -ModViewerZip '<path>' to include it; building without it."
+    throw "No Mod Viewer zip found. Mod Viewer is required, so the package cannot be built without it. Pass -ModViewerZip '<path>'."
 }
 
 function ConvertTo-ZipExternalAttributes {
