@@ -27,7 +27,7 @@ public sealed class ModContext
 
     public void Log(string message) => global::MelvorModLoader.Log.Write($"[{Name}] {message}");
 
-    /// <summary>Adds a window to the loader's Mods menu and gives it an optional key.</summary>
+    /// <summary>Registers a mod panel that Mod Viewer can open, with an optional key.</summary>
     public ModWindow AddWindow(string title, Action toggle, Key defaultKey = Key.None) =>
         Hotkeys.Add(Name, title, toggle, new KeyChord(defaultKey));
 
