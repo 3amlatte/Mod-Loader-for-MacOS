@@ -29,6 +29,9 @@ param(
     # BackupSaver-*.zip in ../melvor-idle-2-mods/dist when that folder exists.
     [string] $BackupSaverZip,
 
+    # Nexus-safe package: no .sh or .command installer scripts.
+    [switch] $ScriptFree,
+
     [string] $OutputDir
 )
 
@@ -100,7 +103,8 @@ if ($BackupSaverZip -and -not (Test-Path -LiteralPath $BackupSaverZip)) {
 
 $stageRoot = Join-Path $outDir 'stage'
 $publishRoot = Join-Path $outDir '_publish'
-$packageName = "ModLoaderForMacOS-$Version-macos"
+$packageSuffix = if ($ScriptFree) { '-manual' } else { '' }
+$packageName = "ModLoaderForMacOS-$Version-macos$packageSuffix"
 $packageRoot = Join-Path $stageRoot $packageName
 $zipPath = Join-Path $outDir "$packageName.zip"
 
@@ -136,9 +140,12 @@ foreach ($arch in $Architectures) {
     New-Item -ItemType Directory -Force -Path $dest | Out-Null
     Copy-Item -Path (Join-Path $publishDir '*') -Destination $dest -Recurse -Force
 
-    # These are build/debug leftovers, not needed by Godot.
+    # These are build/debug leftovers, not needed by Godot. createdump is also
+    # removed from the Nexus package because Nexus quarantines native executables.
     Get-ChildItem -LiteralPath $dest -Filter '*.pdb' -File -ErrorAction SilentlyContinue | Remove-Item -Force
-    foreach ($leftover in @('MelvorModLoader', 'MelvorModLoader.exe')) {
+    $leftovers = @('MelvorModLoader', 'MelvorModLoader.exe')
+    if ($ScriptFree) { $leftovers += 'createdump' }
+    foreach ($leftover in $leftovers) {
         $path = Join-Path $dest $leftover
         if (Test-Path -LiteralPath $path) { Remove-Item -LiteralPath $path -Force }
     }
@@ -159,15 +166,21 @@ function Write-LfFile {
     [IO.File]::WriteAllText($Path, ($Text -replace "`r`n", "`n"), $utf8NoBom)
 }
 
-# Top-level files: readable scripts and the pieces needed for an advanced manual copy.
-Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'install.sh') -Destination $packageRoot -Force
-Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'uninstall.sh') -Destination $packageRoot -Force
-foreach ($command in @('Install Mod Loader for MacOS.command', 'Uninstall Mod Loader for MacOS.command')) {
-    $source = Join-Path $PSScriptRoot $command
-    $text = [IO.File]::ReadAllText($source)
-    Write-LfFile -Path (Join-Path $packageRoot $command) -Text $text
+# Top-level files. The normal package has the double-click scripts; the Nexus
+# package leaves them out because Nexus quarantines script installers.
+if (-not $ScriptFree) {
+    Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'install.sh') -Destination $packageRoot -Force
+    Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'uninstall.sh') -Destination $packageRoot -Force
+    foreach ($command in @('Install Mod Loader for MacOS.command', 'Uninstall Mod Loader for MacOS.command')) {
+        $source = Join-Path $PSScriptRoot $command
+        $text = [IO.File]::ReadAllText($source)
+        Write-LfFile -Path (Join-Path $packageRoot $command) -Text $text
+    }
 }
-Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'README-MACOS.txt') -Destination $packageRoot -Force
+
+$readme = if ($ScriptFree) { 'README-NEXUS.txt' } else { 'README-MACOS.txt' }
+Copy-Item -LiteralPath (Join-Path $PSScriptRoot $readme) `
+    -Destination (Join-Path $packageRoot 'README-MACOS.txt') -Force
 Copy-Item -LiteralPath (Join-Path $root 'LICENSE') -Destination (Join-Path $packageRoot 'LICENSE.txt') -Force
 foreach ($asset in @('AppIcon.icns', 'logo.png', 'logo.svg', 'logo@2x.png', 'icon.png', 'icon.svg', 'icon@2x.png')) {
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot $asset) -Destination $packageRoot -Force
@@ -299,4 +312,9 @@ Write-Host ("Package: {0} ({1:N1} MB)" -f $zipPath, $sizeMb)
 Write-Host ("SHA256:  {0}" -f $hash)
 Write-Host ""
 Write-Host "This build is experimental and has not been tested on a Mac."
-Write-Host "On the Mac: unzip, then double-click 'Install Mod Loader for MacOS.command'."
+if ($ScriptFree) {
+    Write-Host "Nexus package: unzip and follow README-MACOS.txt for the manual install."
+}
+else {
+    Write-Host "On the Mac: unzip, then double-click 'Install Mod Loader for MacOS.command'."
+}
