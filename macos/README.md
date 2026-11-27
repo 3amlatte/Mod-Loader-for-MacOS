@@ -1,4 +1,4 @@
-# macOS build notes
+# macOS packaging notes
 
 This folder holds the experimental macOS port: the packaging script, the installer, and the
 notes behind the layout.
@@ -24,7 +24,7 @@ folder next to it, and the logger/mod folder move to
 Arch names come from the export features: `arm64` and `x86_64`. A universal export writes one
 data folder per architecture; the installer copies the matching loader for each one it finds.
 
-`-ModViewerZip` is optional: without it the build script looks for the newest
+`-ModViewerZip` is optional: without it the packaging script looks for the newest
 `ModViewer-*.zip` in `../melvor-idle-2-mods/dist` and bundles that. Only one
 Mod Viewer is bundled. The install script installs it when no Mod Viewer is already
 present, updates an earlier copy from this project (`3am.mod`), and leaves a
@@ -66,7 +66,7 @@ bash install.sh ["/path/to/Melvor Idle 2.app"]
 No `.app` is opened. The script:
 
 1. finds the `.app` (default Steam library, then `/Applications`);
-2. matches each `data_GamesByMalcs.Melvor2_macos_*` folder to a loader build;
+2. matches each `data_GamesByMalcs.Melvor2_macos_*` folder to a loader folder;
 3. copies the loader folders into `Contents/Resources`;
 4. writes `Contents/MacOS/override.cfg`;
 5. creates `~/Library/Application Support/MelvorModLoader/mods`;
