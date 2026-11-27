@@ -14,7 +14,7 @@
     <Copyright>Copyright (c) 2026 3amlatte. MIT License.</Copyright>
     <Nullable>enable</Nullable>
 
-    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">osx-arm64</RuntimeIdentifier>
     <SelfContained>true</SelfContained>
     <RuntimeFrameworkVersion>10.0.15</RuntimeFrameworkVersion>
     <EnableDynamicLoading>true</EnableDynamicLoading>
@@ -23,7 +23,7 @@
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
 
     <!-- Compile-time references only. Override with -p:GameData=... on other machines. -->
-    <GameData Condition="'$(GameData)' == ''">..\..\data_GamesByMalcs.Melvor2_windows_x86_64</GameData>
+    <GameData Condition="'$(GameData)' == ''">..\..\data_GamesByMalcs.Melvor2_macos_arm64</GameData>
   </PropertyGroup>
 
   <ItemGroup>

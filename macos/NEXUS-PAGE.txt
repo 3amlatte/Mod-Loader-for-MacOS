@@ -5,8 +5,7 @@ SUMMARY
 An independent mod loader for Melvor Idle 2 on macOS: loads C# mods from a mods folder, keeps failures isolated, and includes a double-click installer for Apple Silicon and Intel.
 
 DESCRIPTION
-Mod Loader for MacOS is an independent loader for Melvor Idle 2. It loads the same C# mods as the
-Windows ecosystem and implements the same public mod API, so existing mods work without changes.
+Mod Loader for MacOS is an independent loader for Melvor Idle 2. It loads existing C# mods and implements the same public mod API, so mods work without changes.
 
 WHAT IT DOES
 - Loads mods. Every mod is a folder under mods. Add a folder to install one, delete it to remove it.
@@ -51,7 +50,6 @@ unchanged.
 REQUIREMENTS
 - macOS 14 or newer (the .NET 10 minimum), Apple Silicon or Intel.
 - Melvor Idle 2 from Steam, the native macOS C# build.
-- Windows package: Windows 10 or newer, same game build.
 
 CREDITS
 Melvor Idle 2 is made by Games by Malcs. This is an unofficial fan project and contains none of

@@ -1,7 +1,6 @@
 # Mod Loader for MacOS
 
-An independent C# mod loader for **Melvor Idle 2** (Steam), with a macOS package for Apple
-Silicon and Intel and a Windows package.
+An independent C# mod loader for **Melvor Idle 2** (Steam), packaged for macOS on Apple Silicon and Intel.
 
 It implements the same public mod API as Melvor Mod Loader (`IMod`, `ModContext`, `GameAccess`,
 `ModWindow`, `Hotkeys`) so existing mod DLLs load without being rebuilt. The implementation is
@@ -14,7 +13,7 @@ new; it is **not** the original Melvor Mod Loader.
 - Raises `ModContext.Frame` once per rendered frame, and pauses it while the game computes
   offline progress.
 - Shows a green line at the top-left for 15 seconds with the loader version and mod count.
-- Adds a **Mods** menu (top-right button, or F1) that lists every registered mod window and lets
+- Adds a **Mods** menu (top bar button, or F1) that lists every registered mod window and lets
   players change or switch off its key. Choices are stored in `mods/hotkeys.json`.
 - Uses Godot's own `override.cfg` mechanism: the loader starts first, then starts the game's
   untouched managed code. No game file is modified or replaced.
@@ -32,25 +31,19 @@ new; it is **not** the original Melvor Mod Loader.
 The installer adds the loader inside `Melvor Idle 2.app` and re-signs the bundle ad-hoc. Manual
 and Terminal instructions are in `macos/README-MACOS.txt`.
 
-## Install (Windows)
-
-Extract the package into the game folder so `override.cfg` sits next to `Melvor2.exe` and
-`data_MelvorModLoader_windows_x86_64` is next to it too.
-
 ## Build
 
 Requires the .NET 10 SDK and the game's managed DLLs.
 
 ```powershell
-dotnet publish Loader/MelvorModLoader.csproj -c Release -r win-x64 `
-  -p:GameData=".../data_GamesByMalcs.Melvor2_windows_x86_64" -p:UseAppHost=false
+dotnet publish Loader/MelvorModLoader.csproj -c Release -r osx-arm64 `n  -p:GameData=".../data_GamesByMalcs.Melvor2_macos_arm64" -p:UseAppHost=false
 ```
 
 macOS package:
 
 ```powershell
 pwsh ./macos/build-macos.ps1 `
-  -GameData ".../data_GamesByMalcs.Melvor2_windows_x86_64" `
+  -GameData ".../data_GamesByMalcs.Melvor2_macos_arm64" `
   -ModViewerZip ".../ModViewer-0.1.11.zip"
 ```
 

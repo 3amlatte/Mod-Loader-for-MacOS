@@ -1,6 +1,6 @@
 # Mod Loader for MacOS 1.0.0
 
-An independent mod loader for **Melvor Idle 2**, with macOS and Windows packages.
+An independent mod loader for **Melvor Idle 2**, packaged for macOS on Apple Silicon and Intel.
 
 It implements the same public mod API as Melvor Mod Loader (`IMod`, `ModContext`,
 `GameAccess`, `ModWindow`, `Hotkeys`) so existing mod DLLs load unchanged. The
@@ -15,9 +15,9 @@ implementation is new; it is not the original loader.
 - **Mods** button in the game's top bar (or F1): lists every mod window, lets players
   change or switch off its key, and stores choices in `hotkeys.json`.
 - Uses Godot's standard `override.cfg` mechanism. No game file is modified or replaced.
-- macOS package installs inside `Melvor Idle 2.app` and re-signs it ad-hoc; mods, settings,
-  and logs stay in `~/Library/Application Support/MelvorModLoader`.
-- macOS package includes **Mod Viewer 0.1.11**.
+- The macOS package installs inside `Melvor Idle 2.app` and re-signs it ad-hoc; mods,
+  settings, and logs stay in `~/Library/Application Support/MelvorModLoader`.
+- The macOS package includes **Mod Viewer 0.1.11**.
 - No Merchant or Multitask code/files.
 
 ## Install (macOS)
@@ -29,27 +29,21 @@ implementation is new; it is not the original loader.
    Privacy & Security -> Open Anyway.
 5. Click Install, then Start Game.
 
-## Install (Windows)
-
-Extract the package into the game folder so `override.cfg` sits next to `Melvor2.exe` and
-`data_MelvorModLoader_windows_x86_64` is next to it too.
-
 ## Compatibility
 
 The assembly name and public API names remain `MelvorModLoader` because that is the binary
 contract existing mods reference. The product and implementation are Mod Loader for MacOS.
 
-## Packages
+## Package
 
-- `ModLoaderForMacOS-1.0.0-macos.zip` — SHA256
+- `ModLoaderForMacOS-1.0.0-macos.zip` - SHA256
   `035A0ED3A1909573255B1B20525CFDD08953CA2BFA106BEA9335593552A7144F`
-- `ModLoaderForMacOS-1.0.0-windows.zip` — SHA256
-  `8015D8CFA6069142DF6BCE53211F3AB188B6D8DF487C4E9ECF9F70073D34D3C8`
 
 The macOS package is experimental and has not been run on a physical Mac. The loader and
-all 14 3am mods compile against this API.
+all 14 3am mods compile against this API. Only the macOS package is published; there is no
+Windows package.
 
 ## License
 
 MIT. Melvor Idle 2 is made by Games by Malcs; this is an unofficial fan project and contains
-none of the game's files. The .NET runtime in the packages is Microsoft's, under the MIT license.
+none of the game's files. The .NET runtime in the package is Microsoft's, under the MIT license.
