@@ -1,7 +1,7 @@
 # macOS packaging notes
 
-This folder holds the experimental macOS port: the packaging script, the installer, and the
-notes behind the layout.
+This folder holds the experimental macOS port: the packaging script, the install script, and
+the notes behind the layout.
 
 ## Why the layout is what it is
 
@@ -16,19 +16,18 @@ must sit next to the executable inside `Contents/MacOS/` (Godot's `override.cfg`
 executable's directory, and on macOS that is the bundle's `Contents/MacOS`).
 
 When `override.cfg` replaces `dotnet/project/assembly_name` with `MelvorModLoader`, Godot looks
-for `Contents/Resources/data_MelvorModLoader_macos_<arch>`, which is exactly what the installer
-creates. The loader's own `FindGameDataDir` then finds the game's `data_GamesByMalcs.Melvor2_*`
+for `Contents/Resources/data_MelvorModLoader_macos_<arch>`, which is exactly what the install
+script creates. The loader's own `FindGameDataDir` then finds the game's `data_GamesByMalcs.Melvor2_*`
 folder next to it, and the logger/mod folder move to
 `~/Library/Application Support/MelvorModLoader` so runtime files do not modify the signed bundle.
 
 Arch names come from the export features: `arm64` and `x86_64`. A universal export writes one
-data folder per architecture; the installer copies the matching loader for each one it finds.
+data folder per architecture; the install script copies the matching loader for each one it finds.
 
 `-ModViewerZip` is optional: without it the packaging script looks for the newest
 `ModViewer-*.zip` in `../melvor-idle-2-mods/dist` and bundles that. Only one
-Mod Viewer is bundled. The install script installs it when no Mod Viewer is already
-present, updates an earlier copy from this project (`3am.mod`), and leaves a
-third-party Mod Viewer untouched.
+Mod Viewer is bundled and required. The install script always installs or updates
+`mods/ModViewer`; it warns if another ModViewer exists under a different folder.
 
 Both runtime identifiers are packaged:
 
@@ -43,7 +42,7 @@ Both runtime identifiers are packaged:
 ModLoaderForMacOS-<version>-macos/
   arm64/data_MelvorModLoader_macos_arm64/     payload, copied into Contents/Resources
   x64/data_MelvorModLoader_macos_x86_64/
-  mods/ModViewer/                             bundled Mod Viewer 0.1.11
+  mods/ModViewer/                             bundled Mod Viewer 0.1.12
   install.sh                                  copies and re-signs; the default install
   uninstall.sh                                removes the loader and re-signs
   README-MACOS.txt
@@ -70,9 +69,8 @@ No `.app` is opened. The script:
 3. copies the loader folders into `Contents/Resources`;
 4. writes `Contents/MacOS/override.cfg`;
 5. creates `~/Library/Application Support/MelvorModLoader/mods`;
-6. copies the bundled `mods/ModViewer` only when no Mod Viewer is installed, or
-   updates an earlier copy from this project (folder contains `3am.mod`); it never
-   deletes a third-party Mod Viewer or anything in `mods-disabled`;
+6. always installs the required bundled `mods/ModViewer` and warns if another
+   ModViewer exists under a different folder;
 7. re-signs the bundle ad-hoc (`codesign --force --deep --sign -`), which is required after
    changing a signed `.app` and also removes the hardened runtime so the bundled Microsoft
    .NET runtime can load. If `--deep` fails on the bundle, it signs the main executable with
@@ -88,7 +86,7 @@ No `.app` is opened. The script:
   when Steam launches it.
 - That the game assembly from the macOS export has the same managed API as the compile-time reference
   used at compile time (expected: yes, same project and version).
-- Steam updates: they replace the bundle, so the installer has to be rerun.
+- Steam updates: they replace the bundle, so the install script has to be rerun.
 
 If the game does not start, delete `Contents/MacOS/override.cfg` first; `MelvorModLoader.log`
 in Application Support (or the game folder, or `/tmp`) says where it stopped.
