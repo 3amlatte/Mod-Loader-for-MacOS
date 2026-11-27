@@ -16,12 +16,6 @@ implementation is new; it is not the original loader.
 - Mod Viewer is required and its Enable checkbox is locked.
 - Updated the bundled Mod Viewer to 0.1.12.
 
-## Changes in 1.0.4
-
-- The top-bar **Mods** button now opens Mod Viewer directly. F1 opens the loader's Mod panels
-  menu for key changes.
-- If Mod Viewer is missing, the button falls back to the Mod panels menu.
-
 ## Changes in 1.0.3
 
 - Removed the unsigned installer and uninstaller `.app` bundles.
